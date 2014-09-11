@@ -7,6 +7,8 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.Mail;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,7 +22,6 @@ namespace PoEWhisperNotifier {
 		[DllImport("user32.dll")]
 		public static extern IntPtr GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
 
-
 		public Main() {
 			InitializeComponent();
 			NotificationIcon.Icon = SystemIcons.Information;
@@ -33,6 +34,7 @@ namespace PoEWhisperNotifier {
 			txtLogPath.Text = Settings.Default.LogPath;
 			tsmNotifyMinimizedOnly.Checked = Settings.Default.NotifyMinimizedOnly;
 			tsmEnableTrayNotifications.Checked = Settings.Default.TrayNotifications;
+			tsmEnableSMTPNotifications.Checked = Settings.Default.EnableSmtpNotifications;
 		}
 
 		void txtLogPath_Click(object sender, EventArgs e) {
@@ -72,13 +74,48 @@ namespace PoEWhisperNotifier {
 		void Monitor_MessageReceived(MessageData obj) {
 			if(Settings.Default.NotifyMinimizedOnly && IsPoeActive())
 				return;
-			Invoke(new Action(() => rtbHistory.AppendText("[" + obj.Date.ToShortTimeString() + "] " + obj.Sender + ": " + obj.Message + "\r\n")));
+			string StampedMessage = "[" + obj.Date.ToShortTimeString() + "] " + obj.Sender + ": " + obj.Message + "\r\n";
+			Invoke(new Action(() => rtbHistory.AppendText(StampedMessage)));
 			if(Settings.Default.TrayNotifications) {
 				Invoke(new Action(() => {
 					NotificationIcon.Visible = true;
 					NotificationIcon.ShowBalloonTip(5000, "Path of Exile Whisper", obj.Sender + ": " + obj.Message, ToolTipIcon.Info);
 				}));
 			}
+			if(Settings.Default.EnableSmtpNotifications) {
+				try {
+					// Feels wasteful to always reload, but really it should only take a millisecond or less.
+					var SmtpSettings = SmtpDetails.LoadFromSettings();
+					using(var Client = new SmtpClient()) {
+						Client.UseDefaultCredentials = false;
+						Client.Credentials = new NetworkCredential(SmtpSettings.Username, SmtpSettings.Password);
+						Client.Host = SmtpSettings.SmtpServer;
+						Client.Port = SmtpSettings.SmtpPort;
+						Client.EnableSsl = true;
+						Client.DeliveryMethod = SmtpDeliveryMethod.Network;
+						string FromAddress = SmtpSettings.Username + "@" + GuessHost(SmtpSettings.SmtpServer);
+						using(var Message = new MailMessage(FromAddress, SmtpSettings.Target)) {
+							Message.Subject = "Path of Exile Whisper Notification";
+							// Limit messages to around 120 characters, some phone providers don't like more.
+							Message.Body = StampedMessage;
+							if(Message.Body.Length + Message.Subject.Length > 120)
+								Message.Body = Message.Body.Substring(0, 120 - Message.Subject.Length) + "..";
+							Client.Send(Message);
+						}
+					};
+				} catch(Exception ex) {
+					Invoke(new Action(() => rtbHistory.AppendText("<Failed to send SMTP: " + ex.Message + ">")));
+				}
+			}
+		}
+
+		private string GuessHost(string SmtpHost) {
+			if(!SmtpHost.Contains("."))
+				throw new ArgumentException("Invalid SMTP server. Ex: smtp.gmail.com");
+			int TldStart = SmtpHost.LastIndexOf('.');
+			string TLD = SmtpHost.Substring(TldStart + 1);
+			SmtpHost = SmtpHost.Substring(0, TldStart);
+			return (SmtpHost.Contains(".") ? SmtpHost.Substring(SmtpHost.LastIndexOf('.') + 1) : SmtpHost) + "." + TLD;
 		}
 
 		private void cmdStop_Click(object sender, EventArgs e) {
@@ -113,6 +150,33 @@ namespace PoEWhisperNotifier {
 			Settings.Default.TrayNotifications = tsmEnableTrayNotifications.Checked;
 			Settings.Default.Save();
 			NotificationIcon.Visible = Settings.Default.TrayNotifications;
+		}
+
+		private void tsmEnableSMTPNotifications_Click(object sender, EventArgs e) {
+			tsmEnableSMTPNotifications.Checked = !tsmEnableSMTPNotifications.Checked;
+			Settings.Default.EnableSmtpNotifications = tsmEnableSMTPNotifications.Checked;
+			Settings.Default.Save();
+			if(Settings.Default.EnableSmtpNotifications) {
+				var CurrSettings = SmtpDetails.LoadFromSettings();
+				if(!CurrSettings.IsValid)
+					ShowSmtpDialog();
+			}
+		}
+
+		private void configureSMTPToolStripMenuItem_Click(object sender, EventArgs e) {
+			ShowSmtpDialog();
+		}
+
+		private void ShowSmtpDialog() {
+			using(var SmtpDialog = new ConfigureSmtpDialog()) {
+				SmtpDialog.ShowDialog();
+				if(!SmtpDialog.Details.IsValid && Settings.Default.EnableSmtpNotifications) {
+					tsmEnableSMTPNotifications.Checked = false;
+					Settings.Default.EnableSmtpNotifications = false;
+					Settings.Default.Save();
+					MessageBox.Show("Disabled SMTP notifications as your settings are invalid.");
+				}
+			}
 		}
 
 		private LogMonitor Monitor;

@@ -58,5 +58,29 @@ namespace PoEWhisperNotifier.Properties {
                 this["TrayNotifications"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string SerializedSmtpData {
+            get {
+                return ((string)(this["SerializedSmtpData"]));
+            }
+            set {
+                this["SerializedSmtpData"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool EnableSmtpNotifications {
+            get {
+                return ((bool)(this["EnableSmtpNotifications"]));
+            }
+            set {
+                this["EnableSmtpNotifications"] = value;
+            }
+        }
     }
 }
