@@ -142,7 +142,7 @@ namespace PoEWhisperNotifier {
 			var FgProc = Process.GetProcessById((int)pid);
 			if(FgProc == null)
 				return false;
-			return FgProc.ProcessName == "PathOfExile";
+			return FgProc.ProcessName.Contains("PathOfExile");
 		}
 
 		private void tsmEnableTrayNotifications_Click(object sender, EventArgs e) {
