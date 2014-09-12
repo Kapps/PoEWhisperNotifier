@@ -41,9 +41,11 @@
 			this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.tsmNotifyMinimizedOnly = new System.Windows.Forms.ToolStripMenuItem();
 			this.tsmEnableTrayNotifications = new System.Windows.Forms.ToolStripMenuItem();
-			this.NotificationIcon = new System.Windows.Forms.NotifyIcon(this.components);
 			this.tsmEnableSMTPNotifications = new System.Windows.Forms.ToolStripMenuItem();
 			this.configureSMTPToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.NotificationIcon = new System.Windows.Forms.NotifyIcon(this.components);
+			this.tsmEnablePushBullet = new System.Windows.Forms.ToolStripMenuItem();
+			this.configurePushBulletToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.tableLayoutPanel1.SuspendLayout();
 			this.menuStrip1.SuspendLayout();
 			this.SuspendLayout();
@@ -146,7 +148,7 @@
 			// exitToolStripMenuItem
 			// 
 			this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-			this.exitToolStripMenuItem.Size = new System.Drawing.Size(244, 36);
+			this.exitToolStripMenuItem.Size = new System.Drawing.Size(127, 36);
 			this.exitToolStripMenuItem.Text = "E&xit";
 			this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
 			// 
@@ -156,7 +158,9 @@
             this.tsmNotifyMinimizedOnly,
             this.tsmEnableTrayNotifications,
             this.tsmEnableSMTPNotifications,
-            this.configureSMTPToolStripMenuItem});
+            this.tsmEnablePushBullet,
+            this.configureSMTPToolStripMenuItem,
+            this.configurePushBulletToolStripMenuItem});
 			this.editToolStripMenuItem.Name = "editToolStripMenuItem";
 			this.editToolStripMenuItem.Size = new System.Drawing.Size(113, 38);
 			this.editToolStripMenuItem.Text = "&Settings";
@@ -164,35 +168,49 @@
 			// tsmNotifyMinimizedOnly
 			// 
 			this.tsmNotifyMinimizedOnly.Name = "tsmNotifyMinimizedOnly";
-			this.tsmNotifyMinimizedOnly.Size = new System.Drawing.Size(403, 36);
+			this.tsmNotifyMinimizedOnly.Size = new System.Drawing.Size(422, 36);
 			this.tsmNotifyMinimizedOnly.Text = "Notify Only When &Minimized";
 			this.tsmNotifyMinimizedOnly.Click += new System.EventHandler(this.notifyOnlyWhenMinimizedToolStripMenuItem_Click);
 			// 
 			// tsmEnableTrayNotifications
 			// 
 			this.tsmEnableTrayNotifications.Name = "tsmEnableTrayNotifications";
-			this.tsmEnableTrayNotifications.Size = new System.Drawing.Size(403, 36);
+			this.tsmEnableTrayNotifications.Size = new System.Drawing.Size(422, 36);
 			this.tsmEnableTrayNotifications.Text = "Enable &Tray Notifications";
 			this.tsmEnableTrayNotifications.Click += new System.EventHandler(this.tsmEnableTrayNotifications_Click);
-			// 
-			// NotificationIcon
-			// 
-			this.NotificationIcon.Text = "PoE Whisper Notifier";
-			this.NotificationIcon.Visible = true;
 			// 
 			// tsmEnableSMTPNotifications
 			// 
 			this.tsmEnableSMTPNotifications.Name = "tsmEnableSMTPNotifications";
-			this.tsmEnableSMTPNotifications.Size = new System.Drawing.Size(403, 36);
+			this.tsmEnableSMTPNotifications.Size = new System.Drawing.Size(422, 36);
 			this.tsmEnableSMTPNotifications.Text = "Enable &SMTP Notifications";
 			this.tsmEnableSMTPNotifications.Click += new System.EventHandler(this.tsmEnableSMTPNotifications_Click);
 			// 
 			// configureSMTPToolStripMenuItem
 			// 
 			this.configureSMTPToolStripMenuItem.Name = "configureSMTPToolStripMenuItem";
-			this.configureSMTPToolStripMenuItem.Size = new System.Drawing.Size(403, 36);
-			this.configureSMTPToolStripMenuItem.Text = "&Configure SMTP";
+			this.configureSMTPToolStripMenuItem.Size = new System.Drawing.Size(422, 36);
+			this.configureSMTPToolStripMenuItem.Text = "Configure SMTP";
 			this.configureSMTPToolStripMenuItem.Click += new System.EventHandler(this.configureSMTPToolStripMenuItem_Click);
+			// 
+			// NotificationIcon
+			// 
+			this.NotificationIcon.Text = "PoE Whisper Notifier";
+			this.NotificationIcon.Visible = true;
+			// 
+			// tsmEnablePushBullet
+			// 
+			this.tsmEnablePushBullet.Name = "tsmEnablePushBullet";
+			this.tsmEnablePushBullet.Size = new System.Drawing.Size(422, 36);
+			this.tsmEnablePushBullet.Text = "Enable &PushBullet Notifications";
+			this.tsmEnablePushBullet.Click += new System.EventHandler(this.tsmEnablePushbullet_Click);
+			// 
+			// configurePushBulletToolStripMenuItem
+			// 
+			this.configurePushBulletToolStripMenuItem.Name = "configurePushBulletToolStripMenuItem";
+			this.configurePushBulletToolStripMenuItem.Size = new System.Drawing.Size(422, 36);
+			this.configurePushBulletToolStripMenuItem.Text = "Configure PushBullet";
+			this.configurePushBulletToolStripMenuItem.Click += new System.EventHandler(this.configurePushBulletToolStripMenuItem_Click);
 			// 
 			// Main
 			// 
@@ -233,6 +251,8 @@
 		private System.Windows.Forms.NotifyIcon NotificationIcon;
 		private System.Windows.Forms.ToolStripMenuItem tsmEnableSMTPNotifications;
 		private System.Windows.Forms.ToolStripMenuItem configureSMTPToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem tsmEnablePushBullet;
+		private System.Windows.Forms.ToolStripMenuItem configurePushBulletToolStripMenuItem;
 
 	}
 }

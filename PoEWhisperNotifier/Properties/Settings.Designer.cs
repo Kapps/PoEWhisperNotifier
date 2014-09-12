@@ -82,5 +82,29 @@ namespace PoEWhisperNotifier.Properties {
                 this["EnableSmtpNotifications"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool EnablePushbullet {
+            get {
+                return ((bool)(this["EnablePushbullet"]));
+            }
+            set {
+                this["EnablePushbullet"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string SerializedPushBulletData {
+            get {
+                return ((string)(this["SerializedPushBulletData"]));
+            }
+            set {
+                this["SerializedPushBulletData"] = value;
+            }
+        }
     }
 }

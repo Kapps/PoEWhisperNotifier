@@ -47,6 +47,7 @@ namespace PoEWhisperNotifier {
 			tsmNotifyMinimizedOnly.Checked = Settings.Default.NotifyMinimizedOnly;
 			tsmEnableTrayNotifications.Checked = Settings.Default.TrayNotifications;
 			tsmEnableSMTPNotifications.Checked = Settings.Default.EnableSmtpNotifications;
+			tsmEnablePushBullet.Checked = Settings.Default.EnablePushbullet;
 		}
 
 		void txtLogPath_Click(object sender, EventArgs e) {
@@ -87,11 +88,12 @@ namespace PoEWhisperNotifier {
 			if(Settings.Default.NotifyMinimizedOnly && IsPoeActive() && !IsUserIdle())
 				return;
 			string StampedMessage = "[" + obj.Date.ToShortTimeString() + "] " + obj.Sender + ": " + obj.Message + "\r\n";
+			string Title = "Path of Exile Whisper";
 			Invoke(new Action(() => rtbHistory.AppendText(StampedMessage)));
 			if(Settings.Default.TrayNotifications) {
 				Invoke(new Action(() => {
 					NotificationIcon.Visible = true;
-					NotificationIcon.ShowBalloonTip(5000, "Path of Exile Whisper", obj.Sender + ": " + obj.Message, ToolTipIcon.Info);
+					NotificationIcon.ShowBalloonTip(5000, Title, obj.Sender + ": " + obj.Message, ToolTipIcon.Info);
 				}));
 			}
 			if(Settings.Default.EnableSmtpNotifications) {
@@ -102,6 +104,17 @@ namespace PoEWhisperNotifier {
 						SendSmtpNotification(SmtpSettings, StampedMessage);
 				} catch(Exception ex) {
 					Invoke(new Action(() => rtbHistory.AppendText("<Failed to send SMTP: " + ex.Message + ">\r\n")));
+				}
+			}
+			if(Settings.Default.EnablePushbullet) {
+				try {
+					var PbSettings = PushBulletDetails.LoadFromSettings();
+					if(!PbSettings.NotifyOnlyIfIdle || IsUserIdle()) {
+						var Client = new PushBulletClient(PbSettings);
+						Client.SendPush(Title, StampedMessage);
+					}
+				} catch(Exception ex) {
+					Invoke(new Action(() => rtbHistory.AppendText("<Failed to send PushBullet: " + ex.Message + ">\r\n")));
 				}
 			}
 		}
@@ -181,6 +194,23 @@ namespace PoEWhisperNotifier {
 			NotificationIcon.Visible = Settings.Default.TrayNotifications;
 		}
 
+		// TODO: Merge common functionality below, and ideally of most of these enable buttons too.
+
+		private void tsmEnablePushbullet_Click(object sender, EventArgs e) {
+			tsmEnablePushBullet.Checked = !tsmEnablePushBullet.Checked;
+			Settings.Default.EnablePushbullet = tsmEnablePushBullet.Checked;
+			Settings.Default.Save();
+			if(Settings.Default.EnablePushbullet) {
+				var CurrSettings = PushBulletDetails.LoadFromSettings();
+				if(!CurrSettings.IsValid)
+					ShowPushBulletDialog();
+			}
+		}
+
+		private void configurePushBulletToolStripMenuItem_Click(object sender, EventArgs e) {
+			ShowPushBulletDialog();
+		}
+
 		private void tsmEnableSMTPNotifications_Click(object sender, EventArgs e) {
 			tsmEnableSMTPNotifications.Checked = !tsmEnableSMTPNotifications.Checked;
 			Settings.Default.EnableSmtpNotifications = tsmEnableSMTPNotifications.Checked;
@@ -196,6 +226,18 @@ namespace PoEWhisperNotifier {
 			ShowSmtpDialog();
 		}
 
+		private void ShowPushBulletDialog() {
+			using(var PbDialog = new ConfigurePushBulletDialog()) {
+				PbDialog.ShowDialog();
+				if(!PbDialog.Details.IsValid) {
+					tsmEnablePushBullet.Checked = false;
+					Settings.Default.EnablePushbullet = false;
+					Settings.Default.Save();
+					MessageBox.Show("Disabled PushBullet notifications as your settings are invalid.");
+				}
+			}
+		}
+
 		private void ShowSmtpDialog() {
 			using(var SmtpDialog = new ConfigureSmtpDialog()) {
 				SmtpDialog.ShowDialog();
@@ -208,7 +250,6 @@ namespace PoEWhisperNotifier {
 			}
 		}
 
-		private DateTime LastSmtp = DateTime.MinValue;
 		private LogMonitor Monitor;
 	}
 }

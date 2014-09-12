@@ -40,7 +40,7 @@ namespace PoEWhisperNotifier {
 		/// Indicates whether the user should only be notified if not at their computer.
 		/// </summary>
 		[DisplayName("Notify Only If Idle")]
-		[Description("If true, sends a notification only if you have not done any input for 2 minutes. Also bypasses minimized only if this is true and you are idle.")]
+		[Description("If true, sends a notification only if you have not done any input for 2 minutes.")]
 		public bool NotifyOnlyIfIdle { get; set; }
 		/// <summary>
 		/// The password to authenticate with for sending email.
