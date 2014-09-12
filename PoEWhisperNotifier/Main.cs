@@ -17,10 +17,22 @@ using System.Windows.Forms;
 namespace PoEWhisperNotifier {
 	public partial class Main : Form {
 
+		[StructLayout(LayoutKind.Sequential)]
+		struct LASTINPUTINFO {
+			public static readonly int SizeOf = Marshal.SizeOf(typeof(LASTINPUTINFO));
+
+			[MarshalAs(UnmanagedType.U4)]
+			public UInt32 cbSize;
+			[MarshalAs(UnmanagedType.U4)]
+			public UInt32 dwTime;
+		}
+
 		[DllImport("user32.dll")]
 		private static extern IntPtr GetForegroundWindow();
 		[DllImport("user32.dll")]
 		public static extern IntPtr GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
+		[DllImport("user32.dll")]
+		static extern bool GetLastInputInfo(ref LASTINPUTINFO plii);
 
 		public Main() {
 			InitializeComponent();
@@ -72,7 +84,7 @@ namespace PoEWhisperNotifier {
 		}
 
 		void Monitor_MessageReceived(MessageData obj) {
-			if(Settings.Default.NotifyMinimizedOnly && IsPoeActive())
+			if(Settings.Default.NotifyMinimizedOnly && IsPoeActive() && !IsUserIdle())
 				return;
 			string StampedMessage = "[" + obj.Date.ToShortTimeString() + "] " + obj.Sender + ": " + obj.Message + "\r\n";
 			Invoke(new Action(() => rtbHistory.AppendText(StampedMessage)));
@@ -86,27 +98,44 @@ namespace PoEWhisperNotifier {
 				try {
 					// Feels wasteful to always reload, but really it should only take a millisecond or less.
 					var SmtpSettings = SmtpDetails.LoadFromSettings();
-					using(var Client = new SmtpClient()) {
-						Client.UseDefaultCredentials = false;
-						Client.Credentials = new NetworkCredential(SmtpSettings.Username, SmtpSettings.Password);
-						Client.Host = SmtpSettings.SmtpServer;
-						Client.Port = SmtpSettings.SmtpPort;
-						Client.EnableSsl = true;
-						Client.DeliveryMethod = SmtpDeliveryMethod.Network;
-						string FromAddress = SmtpSettings.Username + "@" + GuessHost(SmtpSettings.SmtpServer);
-						using(var Message = new MailMessage(FromAddress, SmtpSettings.Target)) {
-							Message.Subject = "Path of Exile Whisper Notification";
-							// Limit messages to around 120 characters, some phone providers don't like more.
-							Message.Body = StampedMessage;
-							if(Message.Body.Length + Message.Subject.Length > 120)
-								Message.Body = Message.Body.Substring(0, 120 - Message.Subject.Length) + "..";
-							Client.Send(Message);
-						}
-					};
+					if(!SmtpSettings.NotifyOnlyIfIdle || IsUserIdle())
+						SendSmtpNotification(SmtpSettings, StampedMessage);
 				} catch(Exception ex) {
 					Invoke(new Action(() => rtbHistory.AppendText("<Failed to send SMTP: " + ex.Message + ">")));
 				}
 			}
+		}
+
+		private bool IsUserIdle() {
+			var LastInput = new LASTINPUTINFO() {
+				cbSize = (uint)Marshal.SizeOf(typeof(LASTINPUTINFO)),
+				dwTime = 0
+			};
+			GetLastInputInfo(ref LastInput);
+			var IdleTime = (Environment.TickCount - LastInput.dwTime);
+			var MinIdleDelay = TimeSpan.FromMinutes(2).TotalMilliseconds;
+			// Less than 0 to account for rollover.
+			return IdleTime < 0 || IdleTime > MinIdleDelay;
+		}
+
+		private void SendSmtpNotification(SmtpDetails SmtpSettings, string StampedMessage) {
+			using(var Client = new SmtpClient()) {
+				Client.UseDefaultCredentials = false;
+				Client.Credentials = new NetworkCredential(SmtpSettings.Username, SmtpSettings.Password);
+				Client.Host = SmtpSettings.SmtpServer;
+				Client.Port = SmtpSettings.SmtpPort;
+				Client.EnableSsl = true;
+				Client.DeliveryMethod = SmtpDeliveryMethod.Network;
+				string FromAddress = SmtpSettings.Username + "@" + GuessHost(SmtpSettings.SmtpServer);
+				using(var Message = new MailMessage(FromAddress, SmtpSettings.Target)) {
+					Message.Subject = "Path of Exile Whisper Notification";
+					// Limit messages to around 120 characters, some phone providers don't like more.
+					Message.Body = StampedMessage;
+					if(Message.Body.Length + Message.Subject.Length > 120)
+						Message.Body = Message.Body.Substring(0, 120 - Message.Subject.Length) + "..";
+					Client.Send(Message);
+				}
+			};
 		}
 
 		private string GuessHost(string SmtpHost) {
@@ -179,6 +208,7 @@ namespace PoEWhisperNotifier {
 			}
 		}
 
+		private DateTime LastSmtp = DateTime.MinValue;
 		private LogMonitor Monitor;
 	}
 }
