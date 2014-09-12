@@ -101,7 +101,7 @@ namespace PoEWhisperNotifier {
 					if(!SmtpSettings.NotifyOnlyIfIdle || IsUserIdle())
 						SendSmtpNotification(SmtpSettings, StampedMessage);
 				} catch(Exception ex) {
-					Invoke(new Action(() => rtbHistory.AppendText("<Failed to send SMTP: " + ex.Message + ">")));
+					Invoke(new Action(() => rtbHistory.AppendText("<Failed to send SMTP: " + ex.Message + ">\r\n")));
 				}
 			}
 		}
