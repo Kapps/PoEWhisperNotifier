@@ -5,4 +5,4 @@ Other features include storing a history of the whispers received and Windows tr
 
 The program works by parsing client.txt as PoE writes to it in realtime. It should also be fairly light on resources (does not load all of client.txt and uses little CPU) and can remain open even while PoE is closed if desire.
 
-Direct download link for the compiled version: https://github.com/Kapps/PoEWhisperNotifier/releases/download/v1.0/PoEWhisperNotifier.7z
+Direct download link for the compiled version: https://github.com/Kapps/PoEWhisperNotifier/releases/download/v1.1b/PoEWhisperNotifier.zip
