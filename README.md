@@ -7,4 +7,4 @@ The program works by parsing client.txt as PoE writes to it in realtime. It shou
 
 For sending notifications to your phone, using PushBullet is highly recommended over SMTP. Simple go to http://pushbullet.com, sign in with your Google account, go to http://pushbullet.com/account and copy that access token into the Configure PushBullet setting in the program (and enable PushBullet notifications in settings).
 
-Direct download link for the compiled version: https://github.com/Kapps/PoEWhisperNotifier/releases/download/v1.2/PoEWhisperNotifier.zip
+Direct download link for the compiled version: https://github.com/Kapps/PoEWhisperNotifier/releases/download/v1.3/PoEWhisperNotifier.zip
