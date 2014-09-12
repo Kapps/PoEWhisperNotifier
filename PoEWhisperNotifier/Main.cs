@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Media;
 using System.Net;
 using System.Net.Mail;
 using System.Runtime.InteropServices;
@@ -48,6 +49,7 @@ namespace PoEWhisperNotifier {
 			tsmEnableTrayNotifications.Checked = Settings.Default.TrayNotifications;
 			tsmEnableSMTPNotifications.Checked = Settings.Default.EnableSmtpNotifications;
 			tsmEnablePushBullet.Checked = Settings.Default.EnablePushbullet;
+			tsmEnableSound.Checked = Settings.Default.EnableSound;
 		}
 
 		void txtLogPath_Click(object sender, EventArgs e) {
@@ -96,6 +98,8 @@ namespace PoEWhisperNotifier {
 					NotificationIcon.ShowBalloonTip(5000, Title, obj.Sender + ": " + obj.Message, ToolTipIcon.Info);
 				}));
 			}
+			if(Settings.Default.EnableSound)
+				this.SoundPlayer.Play();
 			if(Settings.Default.EnableSmtpNotifications) {
 				try {
 					// Feels wasteful to always reload, but really it should only take a millisecond or less.
@@ -194,6 +198,12 @@ namespace PoEWhisperNotifier {
 			NotificationIcon.Visible = Settings.Default.TrayNotifications;
 		}
 
+		private void tsmEnableSound_Click(object sender, EventArgs e) {
+			tsmEnableSound.Checked = !tsmEnableSound.Checked;
+			Settings.Default.EnableSound = tsmEnableSound.Checked;
+			Settings.Default.Save();
+		}
+
 		// TODO: Merge common functionality below, and ideally of most of these enable buttons too.
 
 		private void tsmEnablePushbullet_Click(object sender, EventArgs e) {
@@ -250,6 +260,7 @@ namespace PoEWhisperNotifier {
 			}
 		}
 
+		private SoundPlayer SoundPlayer = new SoundPlayer("Content\\notify.wav");
 		private LogMonitor Monitor;
 	}
 }

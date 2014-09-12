@@ -106,5 +106,17 @@ namespace PoEWhisperNotifier.Properties {
                 this["SerializedPushBulletData"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool EnableSound {
+            get {
+                return ((bool)(this["EnableSound"]));
+            }
+            set {
+                this["EnableSound"] = value;
+            }
+        }
     }
 }

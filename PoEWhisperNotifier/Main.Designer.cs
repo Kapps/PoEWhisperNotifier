@@ -42,10 +42,11 @@
 			this.tsmNotifyMinimizedOnly = new System.Windows.Forms.ToolStripMenuItem();
 			this.tsmEnableTrayNotifications = new System.Windows.Forms.ToolStripMenuItem();
 			this.tsmEnableSMTPNotifications = new System.Windows.Forms.ToolStripMenuItem();
-			this.configureSMTPToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.NotificationIcon = new System.Windows.Forms.NotifyIcon(this.components);
 			this.tsmEnablePushBullet = new System.Windows.Forms.ToolStripMenuItem();
+			this.configureSMTPToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.configurePushBulletToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.NotificationIcon = new System.Windows.Forms.NotifyIcon(this.components);
+			this.tsmEnableSound = new System.Windows.Forms.ToolStripMenuItem();
 			this.tableLayoutPanel1.SuspendLayout();
 			this.menuStrip1.SuspendLayout();
 			this.SuspendLayout();
@@ -157,6 +158,7 @@
 			this.editToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.tsmNotifyMinimizedOnly,
             this.tsmEnableTrayNotifications,
+            this.tsmEnableSound,
             this.tsmEnableSMTPNotifications,
             this.tsmEnablePushBullet,
             this.configureSMTPToolStripMenuItem,
@@ -186,18 +188,6 @@
 			this.tsmEnableSMTPNotifications.Text = "Enable &SMTP Notifications";
 			this.tsmEnableSMTPNotifications.Click += new System.EventHandler(this.tsmEnableSMTPNotifications_Click);
 			// 
-			// configureSMTPToolStripMenuItem
-			// 
-			this.configureSMTPToolStripMenuItem.Name = "configureSMTPToolStripMenuItem";
-			this.configureSMTPToolStripMenuItem.Size = new System.Drawing.Size(422, 36);
-			this.configureSMTPToolStripMenuItem.Text = "Configure SMTP";
-			this.configureSMTPToolStripMenuItem.Click += new System.EventHandler(this.configureSMTPToolStripMenuItem_Click);
-			// 
-			// NotificationIcon
-			// 
-			this.NotificationIcon.Text = "PoE Whisper Notifier";
-			this.NotificationIcon.Visible = true;
-			// 
 			// tsmEnablePushBullet
 			// 
 			this.tsmEnablePushBullet.Name = "tsmEnablePushBullet";
@@ -205,12 +195,31 @@
 			this.tsmEnablePushBullet.Text = "Enable &PushBullet Notifications";
 			this.tsmEnablePushBullet.Click += new System.EventHandler(this.tsmEnablePushbullet_Click);
 			// 
+			// configureSMTPToolStripMenuItem
+			// 
+			this.configureSMTPToolStripMenuItem.Name = "configureSMTPToolStripMenuItem";
+			this.configureSMTPToolStripMenuItem.Size = new System.Drawing.Size(422, 36);
+			this.configureSMTPToolStripMenuItem.Text = "Configure SMTP";
+			this.configureSMTPToolStripMenuItem.Click += new System.EventHandler(this.configureSMTPToolStripMenuItem_Click);
+			// 
 			// configurePushBulletToolStripMenuItem
 			// 
 			this.configurePushBulletToolStripMenuItem.Name = "configurePushBulletToolStripMenuItem";
 			this.configurePushBulletToolStripMenuItem.Size = new System.Drawing.Size(422, 36);
 			this.configurePushBulletToolStripMenuItem.Text = "Configure PushBullet";
 			this.configurePushBulletToolStripMenuItem.Click += new System.EventHandler(this.configurePushBulletToolStripMenuItem_Click);
+			// 
+			// NotificationIcon
+			// 
+			this.NotificationIcon.Text = "PoE Whisper Notifier";
+			this.NotificationIcon.Visible = true;
+			// 
+			// tsmEnableSound
+			// 
+			this.tsmEnableSound.Name = "tsmEnableSound";
+			this.tsmEnableSound.Size = new System.Drawing.Size(422, 36);
+			this.tsmEnableSound.Text = "Enable S&ound";
+			this.tsmEnableSound.Click += new System.EventHandler(this.tsmEnableSound_Click);
 			// 
 			// Main
 			// 
@@ -253,6 +262,7 @@
 		private System.Windows.Forms.ToolStripMenuItem configureSMTPToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem tsmEnablePushBullet;
 		private System.Windows.Forms.ToolStripMenuItem configurePushBulletToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem tsmEnableSound;
 
 	}
 }
