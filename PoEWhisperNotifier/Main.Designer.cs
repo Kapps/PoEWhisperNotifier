@@ -29,6 +29,7 @@
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Main));
 			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
 			this.label1 = new System.Windows.Forms.Label();
 			this.txtLogPath = new System.Windows.Forms.TextBox();
@@ -41,12 +42,14 @@
 			this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.tsmNotifyMinimizedOnly = new System.Windows.Forms.ToolStripMenuItem();
 			this.tsmEnableTrayNotifications = new System.Windows.Forms.ToolStripMenuItem();
+			this.tsmEnableSound = new System.Windows.Forms.ToolStripMenuItem();
 			this.tsmEnableSMTPNotifications = new System.Windows.Forms.ToolStripMenuItem();
 			this.tsmEnablePushBullet = new System.Windows.Forms.ToolStripMenuItem();
 			this.configureSMTPToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.configurePushBulletToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.NotificationIcon = new System.Windows.Forms.NotifyIcon(this.components);
-			this.tsmEnableSound = new System.Windows.Forms.ToolStripMenuItem();
+			this.tsmAutoStart = new System.Windows.Forms.ToolStripMenuItem();
+			this.tsmMinimizeToTray = new System.Windows.Forms.ToolStripMenuItem();
 			this.tableLayoutPanel1.SuspendLayout();
 			this.menuStrip1.SuspendLayout();
 			this.SuspendLayout();
@@ -161,6 +164,8 @@
             this.tsmEnableSound,
             this.tsmEnableSMTPNotifications,
             this.tsmEnablePushBullet,
+            this.tsmAutoStart,
+            this.tsmMinimizeToTray,
             this.configureSMTPToolStripMenuItem,
             this.configurePushBulletToolStripMenuItem});
 			this.editToolStripMenuItem.Name = "editToolStripMenuItem";
@@ -180,6 +185,13 @@
 			this.tsmEnableTrayNotifications.Size = new System.Drawing.Size(422, 36);
 			this.tsmEnableTrayNotifications.Text = "Enable &Tray Notifications";
 			this.tsmEnableTrayNotifications.Click += new System.EventHandler(this.tsmEnableTrayNotifications_Click);
+			// 
+			// tsmEnableSound
+			// 
+			this.tsmEnableSound.Name = "tsmEnableSound";
+			this.tsmEnableSound.Size = new System.Drawing.Size(422, 36);
+			this.tsmEnableSound.Text = "Enable S&ound";
+			this.tsmEnableSound.Click += new System.EventHandler(this.tsmEnableSound_Click);
 			// 
 			// tsmEnableSMTPNotifications
 			// 
@@ -214,12 +226,19 @@
 			this.NotificationIcon.Text = "PoE Whisper Notifier";
 			this.NotificationIcon.Visible = true;
 			// 
-			// tsmEnableSound
+			// tsmAutoStart
 			// 
-			this.tsmEnableSound.Name = "tsmEnableSound";
-			this.tsmEnableSound.Size = new System.Drawing.Size(422, 36);
-			this.tsmEnableSound.Text = "Enable S&ound";
-			this.tsmEnableSound.Click += new System.EventHandler(this.tsmEnableSound_Click);
+			this.tsmAutoStart.Name = "tsmAutoStart";
+			this.tsmAutoStart.Size = new System.Drawing.Size(422, 36);
+			this.tsmAutoStart.Text = "&Autostart When Opened";
+			this.tsmAutoStart.Click += new System.EventHandler(this.tsmAutoStart_Click);
+			// 
+			// tsmMinimizeToTray
+			// 
+			this.tsmMinimizeToTray.Name = "tsmMinimizeToTray";
+			this.tsmMinimizeToTray.Size = new System.Drawing.Size(422, 36);
+			this.tsmMinimizeToTray.Text = "M&inimize to System Tray";
+			this.tsmMinimizeToTray.Click += new System.EventHandler(this.tsmMinimizeToTray_Click);
 			// 
 			// Main
 			// 
@@ -229,6 +248,7 @@
 			this.Controls.Add(this.tableLayoutPanel1);
 			this.Controls.Add(this.menuStrip1);
 			this.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.MainMenuStrip = this.menuStrip1;
 			this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
 			this.Name = "Main";
@@ -263,6 +283,8 @@
 		private System.Windows.Forms.ToolStripMenuItem tsmEnablePushBullet;
 		private System.Windows.Forms.ToolStripMenuItem configurePushBulletToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem tsmEnableSound;
+		private System.Windows.Forms.ToolStripMenuItem tsmAutoStart;
+		private System.Windows.Forms.ToolStripMenuItem tsmMinimizeToTray;
 
 	}
 }

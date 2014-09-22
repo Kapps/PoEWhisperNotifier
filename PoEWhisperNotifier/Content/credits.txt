@@ -1,3 +1,6 @@
 ﻿Notify.wav is a renamed sound part of the Notifications Pack created by FoolBoyMedia at https://www.freesound.org/people/FoolBoyMedia/sounds/234564/.
 The sound is licensed under the Creative Commons Attribution Non-Commercial License.
 Please see http://creativecommons.org/licenses/by-nc/3.0/ for the license details.
+
+The application icon (Chat.ico) is originally part of the Crysigns Icon Pack created by edesigner (http://www.crystalxp.net/galerie/en.id.15794-crysigns-asher-icons-a-png.htm)
+The icons are allowed for non-commercial use only.

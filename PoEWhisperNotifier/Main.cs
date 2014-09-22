@@ -37,11 +37,13 @@ namespace PoEWhisperNotifier {
 
 		public Main() {
 			InitializeComponent();
-			NotificationIcon.Icon = SystemIcons.Information;
+			NotificationIcon.Icon = this.Icon;
 		}
 
 		private void Form1_Load(object sender, EventArgs e) {
-			NotificationIcon.Visible = Settings.Default.TrayNotifications;
+			NotificationIcon.Visible = Settings.Default.TrayNotifications || Settings.Default.MinimizeToTray;
+			NotificationIcon.BalloonTipClicked += NotificationIconClick;
+			NotificationIcon.DoubleClick += NotificationIconClick;
 			txtLogPath.TextChanged += txtLogPath_TextChanged;
 			txtLogPath.Click += txtLogPath_Click;
 			txtLogPath.Text = Settings.Default.LogPath;
@@ -50,6 +52,29 @@ namespace PoEWhisperNotifier {
 			tsmEnableSMTPNotifications.Checked = Settings.Default.EnableSmtpNotifications;
 			tsmEnablePushBullet.Checked = Settings.Default.EnablePushbullet;
 			tsmEnableSound.Checked = Settings.Default.EnableSound;
+			tsmAutoStart.Checked = Settings.Default.AutoStartWhenOpened;
+			tsmMinimizeToTray.Checked = Settings.Default.MinimizeToTray;
+			this.Resize += Main_Resize;
+
+			if(Settings.Default.AutoStartWhenOpened)
+				Start();
+		}
+
+		private void NotificationIconClick(object sender, EventArgs e) {
+			this.Visible = true;
+			this.WindowState = FormWindowState.Normal;
+			this.Show();
+		}
+
+		void Main_Resize(object sender, EventArgs e) {
+			if(Settings.Default.MinimizeToTray) {
+				if(this.WindowState == FormWindowState.Minimized) {
+					this.Visible = false;
+					NotificationIcon.Visible = true;
+				} else {
+					this.Visible = true;
+				}
+			}
 		}
 
 		void txtLogPath_Click(object sender, EventArgs e) {
@@ -75,6 +100,10 @@ namespace PoEWhisperNotifier {
 		}
 
 		private void cmdStart_Click(object sender, EventArgs e) {
+			Start();
+		}
+
+		private void Start() {
 			if(!LogMonitor.IsValidLogPath(txtLogPath.Text)) {
 				MessageBox.Show("The log path you have entered is invalid. Please select the client.txt file located in the PoE folder.");
 				return;
@@ -195,13 +224,26 @@ namespace PoEWhisperNotifier {
 			tsmEnableTrayNotifications.Checked = !tsmEnableTrayNotifications.Checked;
 			Settings.Default.TrayNotifications = tsmEnableTrayNotifications.Checked;
 			Settings.Default.Save();
-			NotificationIcon.Visible = Settings.Default.TrayNotifications;
+			NotificationIcon.Visible = Settings.Default.TrayNotifications || Settings.Default.MinimizeToTray;
 		}
 
 		private void tsmEnableSound_Click(object sender, EventArgs e) {
 			tsmEnableSound.Checked = !tsmEnableSound.Checked;
 			Settings.Default.EnableSound = tsmEnableSound.Checked;
 			Settings.Default.Save();
+		}
+
+		private void tsmAutoStart_Click(object sender, EventArgs e) {
+			tsmAutoStart.Checked = !tsmAutoStart.Checked;
+			Settings.Default.AutoStartWhenOpened = tsmAutoStart.Checked;
+			Settings.Default.Save();
+		}
+
+		private void tsmMinimizeToTray_Click(object sender, EventArgs e) {
+			tsmMinimizeToTray.Checked = !tsmMinimizeToTray.Checked;
+			Settings.Default.MinimizeToTray = tsmMinimizeToTray.Checked;
+			Settings.Default.Save();
+			NotificationIcon.Visible = Settings.Default.TrayNotifications || Settings.Default.MinimizeToTray;
 		}
 
 		// TODO: Merge common functionality below, and ideally of most of these enable buttons too.
