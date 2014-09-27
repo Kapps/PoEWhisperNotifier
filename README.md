@@ -6,7 +6,7 @@ The program works by parsing client.txt as PoE writes to it in realtime. It shou
 
 Getting Started
 ==================
-1. Download the compiled version using the link at the bottom and launch the program.
+1. Download and run the compiled version using the link at the bottom.
 2. Make sure the Log Path selected is valid (the default path is fine if you did not change where PoE is installed to).
 3. Press Start (you may wish to enable Auto-Start in settings to skip this step in the future).
 
