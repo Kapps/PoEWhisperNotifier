@@ -1,6 +1,6 @@
 PoEWhisperNotifier
 ==================
-A simple C# application to notify you of whispers you get in PoE (optionally) while your game is minimized through either Windows tray notifications, playing a sound, sending an email, or notifying your phone through PushBullet. It will also record a history of all missed whispers in case you can't immediately get back to it PoE.
+A simple C# application to notify you of whispers you get in PoE (optionally) while your game is minimized through either Windows tray notifications, playing a sound, sending an email, or notifying your phone through PushBullet. It will also record a history of all missed whispers in case you can't immediately get back to PoE.
 
 The program works by parsing client.txt as PoE writes to it in realtime. It should also be fairly light on resources (does not load all of client.txt and uses very little CPU) and can remain open even while PoE is closed if desired.
 
