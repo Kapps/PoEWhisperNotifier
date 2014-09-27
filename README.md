@@ -4,6 +4,8 @@ A simple C# application to notify you of whispers you get in PoE (optionally) wh
 
 The program works by parsing client.txt as PoE writes to it in realtime. It should also be fairly light on resources (does not load all of client.txt and uses very little CPU) and can remain open even while PoE is closed if desired.
 
+Please note that this program never actually interacts with the client and therefore will not get you banned for using it.
+
 Getting Started
 ==================
 1. Download and run the compiled version using the link at the bottom.
