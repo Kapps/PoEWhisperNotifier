@@ -126,8 +126,8 @@ namespace PoEWhisperNotifier {
 			}
 		}
 
-		// Group 1 = Username, Group 2 = Contents - 1ff = message code for chat.
-		private static readonly Regex WhisperRegex = new Regex(@"^.+\ .+\ .+\ 1ff\ \[.+\]\ @(.+):\ (.+)$");
+		// Group 1 = Username, Group 2 = Contents
+		private static readonly Regex WhisperRegex = new Regex(@"^.+\ .+\ .+\ .+\ \[.+\]\ @(.+):\ (.+)$");
 		private FileStream _LogStream;
 	}
 }
