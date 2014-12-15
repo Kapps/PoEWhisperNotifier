@@ -78,7 +78,8 @@ namespace PoEWhisperNotifier {
 			this._LogStream = new FileStream(LogPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
 			_LogStream.Seek(0, SeekOrigin.End);
 			// Instead of proper async handling, take the lazy way and ReadLine in a new thread.
-			new Thread(RunReadLoop) { IsBackground = true }.Start();
+			_LogThread = new Thread(RunReadLoop) { IsBackground = true };
+			_LogThread.Start();
 		}
 
 		/// <summary>
@@ -89,6 +90,7 @@ namespace PoEWhisperNotifier {
 			if(!IsMonitoring)
 				throw new InvalidOperationException("Not currently monitoring.");
 			IsMonitoring = false;
+			_LogThread.Join();
 			_LogStream.Dispose();
 		}
 
@@ -129,5 +131,6 @@ namespace PoEWhisperNotifier {
 		// Group 1 = Username, Group 2 = Contents
 		private static readonly Regex WhisperRegex = new Regex(@"^.+\ .+\ .+\ .+\ \[.+\]\ @(.+):\ (.+)$");
 		private FileStream _LogStream;
+		private Thread _LogThread;
 	}
 }

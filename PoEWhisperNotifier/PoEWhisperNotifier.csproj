@@ -61,6 +61,7 @@
     <Compile Include="ConfigureSmtpDialog.Designer.cs">
       <DependentUpon>ConfigureSmtpDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="IdleManager.cs" />
     <Compile Include="LogMonitor.cs" />
     <Compile Include="Main.cs">
       <SubType>Form</SubType>

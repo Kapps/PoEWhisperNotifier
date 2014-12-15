@@ -12,28 +12,16 @@ using System.Net;
 using System.Net.Mail;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace PoEWhisperNotifier {
 	public partial class Main : Form {
-
-		[StructLayout(LayoutKind.Sequential)]
-		struct LASTINPUTINFO {
-			public static readonly int SizeOf = Marshal.SizeOf(typeof(LASTINPUTINFO));
-
-			[MarshalAs(UnmanagedType.U4)]
-			public UInt32 cbSize;
-			[MarshalAs(UnmanagedType.U4)]
-			public UInt32 dwTime;
-		}
-
 		[DllImport("user32.dll")]
 		private static extern IntPtr GetForegroundWindow();
 		[DllImport("user32.dll")]
 		public static extern IntPtr GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
-		[DllImport("user32.dll")]
-		static extern bool GetLastInputInfo(ref LASTINPUTINFO plii);
 
 		public Main() {
 			InitializeComponent();
@@ -112,12 +100,19 @@ namespace PoEWhisperNotifier {
 			cmdStart.Enabled = false;
 			this.Monitor = new LogMonitor(txtLogPath.Text);
 			Monitor.BeginMonitoring();
-			Monitor.MessageReceived += Monitor_MessageReceived;
+			Monitor.MessageReceived += ProcessMessage;
+			IdleManager.BeginMonitoring();
 		}
 
-		void Monitor_MessageReceived(MessageData obj) {
-			if(Settings.Default.NotifyMinimizedOnly && IsPoeActive() && !IsUserIdle())
-				return;
+		void ProcessMessage(MessageData obj) {
+			if (Settings.Default.NotifyMinimizedOnly && IsPoeActive()) {
+				if(!IdleManager.IsUserIdle) {
+					// If the user isn't idle, replay the message if they do go idle.
+					IdleManager.AddIdleAction(() => ProcessMessage(obj));
+					return;
+				}
+				// Otherwise, they are idle, so process the message anyways.
+			}
 			string StampedMessage = "[" + obj.Date.ToShortTimeString() + "] " + obj.Sender + ": " + obj.Message + "\r\n";
 			string Title = "Path of Exile Whisper";
 			Invoke(new Action(() => rtbHistory.AppendText(StampedMessage)));
@@ -130,38 +125,36 @@ namespace PoEWhisperNotifier {
 			if(Settings.Default.EnableSound)
 				this.SoundPlayer.Play();
 			if(Settings.Default.EnableSmtpNotifications) {
-				try {
-					// Feels wasteful to always reload, but really it should only take a millisecond or less.
-					var SmtpSettings = SmtpDetails.LoadFromSettings();
-					if(!SmtpSettings.NotifyOnlyIfIdle || IsUserIdle())
-						SendSmtpNotification(SmtpSettings, StampedMessage);
-				} catch(Exception ex) {
-					Invoke(new Action(() => rtbHistory.AppendText("<Failed to send SMTP: " + ex.Message + ">\r\n")));
-				}
+				// Feels wasteful to always reload, but really it should only take a millisecond or less.
+				var SmtpSettings = SmtpDetails.LoadFromSettings();
+				var SmtpAct = CheckedAction("SMTP", () => SendSmtpNotification(SmtpSettings, StampedMessage));
+				if (!SmtpSettings.NotifyOnlyIfIdle)
+					SmtpAct();
+				else
+					IdleManager.AddIdleAction(SmtpAct);
 			}
 			if(Settings.Default.EnablePushbullet) {
-				try {
-					var PbSettings = PushBulletDetails.LoadFromSettings();
-					if(!PbSettings.NotifyOnlyIfIdle || IsUserIdle()) {
-						var Client = new PushBulletClient(PbSettings);
-						Client.SendPush(Title, StampedMessage);
-					}
-				} catch(Exception ex) {
-					Invoke(new Action(() => rtbHistory.AppendText("<Failed to send PushBullet: " + ex.Message + ">\r\n")));
-				}
+				var PbSettings = PushBulletDetails.LoadFromSettings();
+				var PbAct = CheckedAction("PushBullet", () => {
+					var Client = new PushBulletClient(PbSettings);
+					Client.SendPush(Title, StampedMessage);
+				});
+				if (!PbSettings.NotifyOnlyIfIdle)
+					PbAct();
+				else
+					IdleManager.AddIdleAction(PbAct);
 			}
 		}
 
-		private bool IsUserIdle() {
-			var LastInput = new LASTINPUTINFO() {
-				cbSize = (uint)Marshal.SizeOf(typeof(LASTINPUTINFO)),
-				dwTime = 0
+		// Wraps an Action in a try-catch and appends to the history any errors with it.
+		private Action CheckedAction(string Task, Action Act) {
+			return () => {
+				try {
+					Act();
+				} catch (Exception ex) {
+					Invoke(new Action(() => rtbHistory.AppendText("<Failed to send " + Task + " notification: " + ex.Message + ">\r\n")));
+				}
 			};
-			GetLastInputInfo(ref LastInput);
-			var IdleTime = (Environment.TickCount - LastInput.dwTime);
-			var MinIdleDelay = TimeSpan.FromMinutes(2).TotalMilliseconds;
-			// Less than 0 to account for rollover.
-			return IdleTime < 0 || IdleTime > MinIdleDelay;
 		}
 
 		private void SendSmtpNotification(SmtpDetails SmtpSettings, string StampedMessage) {
@@ -197,7 +190,8 @@ namespace PoEWhisperNotifier {
 			cmdStart.Enabled = true;
 			cmdStop.Enabled = false;
 			this.Monitor.StopMonitoring();
-			this.Monitor.MessageReceived -= Monitor_MessageReceived;
+			IdleManager.StopMonitoring();
+			this.Monitor.MessageReceived -= ProcessMessage;
 		}
 
 		private void exitToolStripMenuItem_Click(object sender, EventArgs e) {
