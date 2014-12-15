@@ -100,7 +100,7 @@ namespace PoEWhisperNotifier {
 
 		private static void RunIdleLoop() {
 			DateTime PrevInputTime = LastInputTime;
-			while (true) {
+			while (IsMonitoring) {
 				var CurrInputTime = LastInputTime;
 				// Allow a little bit of leeway, our time function isn't 100% accurate since based off current tick which changes as it runs.
 				// Only should make a 1MS difference at most, but just to be safe...
