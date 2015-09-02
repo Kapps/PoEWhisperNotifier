@@ -48,10 +48,10 @@ namespace PoEWhisperNotifier {
 				if(LogMonitor.TryGetDefaultLogPath(out DefaultLogPath))
 					txtLogPath.Text = DefaultLogPath;
 				else
-					AppendMessage("Failed to figure out client.txt location. You will have to manually set the path.");
+					AppendMessage("Unable to figure out client.txt location. You will have to manually set the path.");
 			}
 			if(Settings.Default.AutoStartWhenOpened)
-				Start();
+				Start(true);
 		}
 
 		private void NotificationIconClick(object sender, EventArgs e) {
@@ -94,12 +94,16 @@ namespace PoEWhisperNotifier {
 		}
 
 		private void cmdStart_Click(object sender, EventArgs e) {
-			Start();
+			Start(false);
 		}
 
-		private void Start() {
+		private void Start(bool AutoStarted) {
 			if(!LogMonitor.IsValidLogPath(txtLogPath.Text)) {
-				MessageBox.Show("The log path you have entered is invalid. Please select the client.txt file located in the PoE folder.");
+				string ErrMsg = "Failed to start " + (AutoStarted ? "automatically " : "") + "as the log path is invalid.";
+				if (AutoStarted)
+					AppendMessage(ErrMsg);
+				else
+					MessageBox.Show(ErrMsg);
 				return;
 			}
 			cmdStop.Enabled = true;
@@ -108,6 +112,7 @@ namespace PoEWhisperNotifier {
 			Monitor.BeginMonitoring();
 			Monitor.MessageReceived += ProcessMessage;
 			IdleManager.BeginMonitoring();
+			AppendMessage("Program started at " + DateTime.Now.ToShortTimeString() + ".");
 		}
 
 		void ProcessMessage(MessageData obj) {
@@ -202,6 +207,7 @@ namespace PoEWhisperNotifier {
 			this.Monitor.StopMonitoring();
 			IdleManager.StopMonitoring();
 			this.Monitor.MessageReceived -= ProcessMessage;
+			AppendMessage("Program stopped at " + DateTime.Now.ToShortTimeString() + ".");
 		}
 
 		private void exitToolStripMenuItem_Click(object sender, EventArgs e) {
