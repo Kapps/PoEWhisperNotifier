@@ -18,18 +18,42 @@ namespace PoEWhisperNotifier {
 		public readonly DateTime Date;
 		/// <summary>
 		/// The name of the user who sent the message.
+		/// This value may be null for some message types.
 		/// </summary>
 		public readonly string Sender;
 		/// <summary>
 		/// The contents of the message, as entered by the sender.
 		/// </summary>
 		public readonly string Message;
+		/// <summary>
+		/// The type of the message that was received (such as a whisper or disconnect).
+		/// </summary>
+		public readonly LogMessageType MessageType;
 
-		public MessageData(DateTime Date, string Sender, string Message) {
+		public MessageData(DateTime Date, string Sender, string Message, LogMessageType MessageType) {
 			this.Date = Date;
 			this.Sender = Sender;
 			this.Message = Message;
+			this.MessageType = MessageType;
 		}
+	}
+
+	/// <summary>
+	/// Indicates the type of message contained by a MessageData instance.
+	/// </summary>
+	public enum LogMessageType {
+		/// <summary>
+		/// An unexpected message was received.
+		/// </summary>
+		Unknown = 0,
+		/// <summary>
+		/// A whisper was sent or received.
+		/// </summary>
+		Whisper = 1,
+		/// <summary>
+		/// An unexpected disconnect was received.
+		/// </summary>
+		Disconnect = 2,
 	}
 
 	/// <summary>
@@ -40,7 +64,7 @@ namespace PoEWhisperNotifier {
 		private const string DEFAULT_LOG_PATH = @"C:\Program Files (x86)\Grinding Gear Games\Path of Exile\logs\Client.txt";
 
 		/// <summary>
-		/// Called when a message is received.
+		/// Called when a message (such as a whisper or disconnect) is received.
 		/// This may be invoked on a thread separate from the UI thread.
 		/// </summary>
 		public event Action<MessageData> MessageReceived;
@@ -130,15 +154,30 @@ namespace PoEWhisperNotifier {
 				}
 				string Line = Reader.ReadLine();
 				MessageData Data;
-				if(TryParseLine(Line, out Data)) {
-					var MR = MessageReceived;
-					if(MR != null)
-						MR(Data);
+				Action<MessageData> Ev = null;
+				if(TryParseWhisper(Line, out Data) || TryParseDisconnect(Line, out Data)) {
+					Ev = MessageReceived;
+					if (Ev != null)
+						Ev(Data);
 				}
 			}
 		}
 
-		private bool TryParseLine(string Line, out MessageData Data) {
+		private bool TryParseDisconnect(string Line, out MessageData Data) {
+			Data = default(MessageData);
+			try {
+				var Match = DisconnectRegex.Match(Line);
+				if (!Match.Success || Match.Groups.Count != 2)
+					return false;
+				string Reason = Match.Groups[1].Value.Trim();
+				Data = new MessageData(DateTime.Now, null, "Abnormal disconnection: " + Reason, LogMessageType.Disconnect);
+				return true;
+			} catch {
+				return false;
+			}
+		}
+
+		private bool TryParseWhisper(string Line, out MessageData Data) {
 			Data = default(MessageData);
 			try {
 				var Match = WhisperRegex.Match(Line);
@@ -148,7 +187,7 @@ namespace PoEWhisperNotifier {
 				string Contents = Match.Groups[2].Value;
 				if(String.IsNullOrWhiteSpace(Username) || String.IsNullOrWhiteSpace(Contents))
 					return false;
-				Data = new MessageData(DateTime.Now, Username, Contents);
+				Data = new MessageData(DateTime.Now, Username, Contents, LogMessageType.Whisper);
 				return true;
 			} catch {
 				return false;
@@ -157,6 +196,7 @@ namespace PoEWhisperNotifier {
 
 		// Group 1 = Username, Group 2 = Contents
 		private static readonly Regex WhisperRegex = new Regex(@"^.+\ .+\ .+\ .+\ \[.+\]\ @(.+):\ (.+)$");
+		private static readonly Regex DisconnectRegex = new Regex(@"^.+\ .+\ .+\ .+\ \[.+\]\ Abnormal disconnect:(.+)");
 		private FileStream _LogStream;
 		private Thread _LogThread;
 	}

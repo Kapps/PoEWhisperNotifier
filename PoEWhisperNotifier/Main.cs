@@ -119,13 +119,13 @@ namespace PoEWhisperNotifier {
 				}
 				// Otherwise, they are idle, so process the message anyways.
 			}
-			string StampedMessage = "[" + obj.Date.ToShortTimeString() + "] " + obj.Sender + ": " + obj.Message + "\r\n";
-			string Title = "Path of Exile Whisper";
+			string StampedMessage = "[" + obj.Date.ToShortTimeString() + "]" + (obj.Sender == null ? "" : (" " + obj.Sender)) + ": " + obj.Message;
+			string Title = "Path of Exile " + obj.MessageType;
 			Invoke(new Action(() => AppendMessage(StampedMessage)));
 			if(Settings.Default.TrayNotifications) {
 				Invoke(new Action(() => {
 					NotificationIcon.Visible = true;
-					NotificationIcon.ShowBalloonTip(5000, Title, obj.Sender + ": " + obj.Message, ToolTipIcon.Info);
+					NotificationIcon.ShowBalloonTip(5000, Title, (obj.Sender == null ? "" : (obj.Sender + ": ")) + obj.Message, ToolTipIcon.Info);
 				}));
 			}
 			if(Settings.Default.EnableSound)
