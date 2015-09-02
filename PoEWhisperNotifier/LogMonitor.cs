@@ -36,6 +36,9 @@ namespace PoEWhisperNotifier {
 	/// Monitors a log file for changes in the form of appended lines.
 	/// </summary>
 	public class LogMonitor {
+
+		private const string DEFAULT_LOG_PATH = @"C:\Program Files (x86)\Grinding Gear Games\Path of Exile\logs\Client.txt";
+
 		/// <summary>
 		/// Called when a message is received.
 		/// This may be invoked on a thread separate from the UI thread.
@@ -57,6 +60,30 @@ namespace PoEWhisperNotifier {
 		/// </summary>
 		public static bool IsValidLogPath(string LogPath) {
 			return !String.IsNullOrWhiteSpace(LogPath) && File.Exists(LogPath) && Path.GetExtension(LogPath) == ".txt";
+		}
+
+		
+		/// <summary>
+		/// Attempts to location a default client.txt location, using either the standard installation path or the directory PoE is running frmo.
+		/// Returns whether the client.txt was successfully located.
+		/// </summary>
+		public static bool TryGetDefaultLogPath(out string LogPath) {
+			try {
+				var PoeProc = Main.GetPoeProcess();
+				string ExpectedPath;
+				if (PoeProc != null)
+					ExpectedPath = Path.Combine(Path.GetDirectoryName(PoeProc.MainModule.FileName), "logs", "Client.txt");
+				else
+					ExpectedPath = DEFAULT_LOG_PATH;
+				if (IsValidLogPath(ExpectedPath)) {
+					LogPath = ExpectedPath;
+					return true;
+				}
+			} catch {
+				// Ignore any failures as this is purely a convenience function and should not cause issues on failure.
+			}
+			LogPath = "";
+			return false;
 		}
 
 		/// <summary>

@@ -43,7 +43,13 @@ namespace PoEWhisperNotifier {
 			tsmAutoStart.Checked = Settings.Default.AutoStartWhenOpened;
 			tsmMinimizeToTray.Checked = Settings.Default.MinimizeToTray;
 			this.Resize += Main_Resize;
-
+			if (!LogMonitor.IsValidLogPath(txtLogPath.Text)) {
+				string DefaultLogPath;
+				if(LogMonitor.TryGetDefaultLogPath(out DefaultLogPath))
+					txtLogPath.Text = DefaultLogPath;
+				else
+					AppendMessage("Failed to figure out client.txt location. You will have to manually set the path.");
+			}
 			if(Settings.Default.AutoStartWhenOpened)
 				Start();
 		}
@@ -115,7 +121,7 @@ namespace PoEWhisperNotifier {
 			}
 			string StampedMessage = "[" + obj.Date.ToShortTimeString() + "] " + obj.Sender + ": " + obj.Message + "\r\n";
 			string Title = "Path of Exile Whisper";
-			Invoke(new Action(() => rtbHistory.AppendText(StampedMessage)));
+			Invoke(new Action(() => AppendMessage(StampedMessage)));
 			if(Settings.Default.TrayNotifications) {
 				Invoke(new Action(() => {
 					NotificationIcon.Visible = true;
@@ -152,9 +158,13 @@ namespace PoEWhisperNotifier {
 				try {
 					Act();
 				} catch (Exception ex) {
-					Invoke(new Action(() => rtbHistory.AppendText("<Failed to send " + Task + " notification: " + ex.Message + ">\r\n")));
+					Invoke(new Action(() => AppendMessage("<Failed to send " + Task + " notification: " + ex.Message + ">\r\n")));
 				}
 			};
+		}
+
+		private void AppendMessage(string Message) {
+			rtbHistory.AppendText(Message + "\r\n");
 		}
 
 		private void SendSmtpNotification(SmtpDetails SmtpSettings, string StampedMessage) {
@@ -212,6 +222,15 @@ namespace PoEWhisperNotifier {
 			if(FgProc == null)
 				return false;
 			return FgProc.ProcessName.Contains("PathOfExile");
+		}
+
+		/// <summary>
+		/// Helper function to try and get the PoE process, if it's currently running.
+		/// </summary>
+		internal static Process GetPoeProcess() {
+			// This doesn't belong in Main, but oh well.
+			Func<Process, bool> IsPoE = (c => c.MainWindowTitle.Contains("Path of Exile") || c.ProcessName.Contains("PathOfExile"));
+			return Process.GetProcesses().FirstOrDefault(IsPoE);
 		}
 
 		private void tsmEnableTrayNotifications_Click(object sender, EventArgs e) {
