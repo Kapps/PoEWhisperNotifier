@@ -24,4 +24,5 @@ Phone Notifications (PushBullet)
 
 Download
 ==================
-Direct download link for the latest compiled version: https://github.com/Kapps/PoEWhisperNotifier/releases/download/v1.5/v1.5.PoEWhisperNotifier.zip
+Download the program from the releases page:
+https://github.com/Kapps/PoEWhisperNotifier/releases/latest
