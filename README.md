@@ -8,20 +8,20 @@ Please note that this program never actually interacts with the client and there
 
 Getting Started
 ==================
-1. Download and run the compiled version using the link at the bottom.
-2. Make sure the Log Path selected is valid (the default path is fine if you did not change where PoE is installed to).
-3. Press Start (you may wish to enable Auto-Start in settings to skip this step in the future).
+1. Download and run the [compiled version](https://github.com/Kapps/PoEWhisperNotifier/releases/latest).
+2. Make sure the Log Path selected is valid (does not have a red background). The default value should work if you did not change where PoE is installed to, or if you run the program while PoE is already running.
+3. Press Start, if not already started.
 
 The default settings will play a sound and show a Windows notification if you receive a whisper while PoE is minimized.
-For sending notifications to your phone, using PushBullet is highly recommended over SMTP.
+For sending notifications to your phone, using PushBullet is highly recommended. If you do not have a mobile device that supports PushBullet, you may use SMTP to send emails / texts.
 
 Phone Notifications (PushBullet)
 ==================
-1. Go to http://pushbullet.com and sign in with your Google account.
+1. Go to http://pushbullet.com and sign in with your Google or Facebook account.
 2. Go to http://pushbullet.com/account and copy that access token.
 3. Go into the Configure PushBullet settings item in the program and paste in the access token.
-4. Make sure Enable PushBullet Notifications is checked.
+4. Make sure that Enable PushBullet Notifications is checked.
 
 Download
 ==================
-You can download the program from the latest [release page](https://github.com/Kapps/PoEWhisperNotifier/releases/latest).
+You can download the latest version of the program from the [release page](https://github.com/Kapps/PoEWhisperNotifier/releases/latest).
