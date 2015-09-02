@@ -8,11 +8,11 @@ Please note that this program never actually interacts with the client and there
 
 Getting Started
 ==================
-1. Download and run the [compiled version](https://github.com/Kapps/PoEWhisperNotifier/releases/latest).
-2. Make sure the Log Path selected is valid (does not have a red background). The default value should work if you did not change where PoE is installed to, or if you run the program while PoE is already running.
-3. Press Start, if not already started.
+To get started, all you need to do is download and run the [compiled version](https://github.com/Kapps/PoEWhisperNotifier/releases/latest). In most cases, your Client.txt path should be automatically detected and you will immediately start receiving notifications.
 
-The default settings will play a sound and show a Windows notification if you receive a whisper while PoE is minimized.
+If your Client.txt path is not detected automatically (has a red background), either run the program after PoE is already running and it should auto-detect it, or click the Log Path textbox, manually locate your Client.txt, then press Start.
+
+The default settings will play a sound and show a Windows notification if you receive a whisper / disconnect while PoE is minimized.
 For sending notifications to your phone, using PushBullet is highly recommended. If you do not have a mobile device that supports PushBullet, you may use SMTP to send emails / texts.
 
 Phone Notifications (PushBullet)
