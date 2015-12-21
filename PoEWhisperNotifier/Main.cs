@@ -52,7 +52,6 @@ namespace PoEWhisperNotifier {
 			}
 			if(Settings.Default.AutoStartWhenOpened)
 				Start(true);
-			ProcessMessage(new MessageData(DateTime.Now, "Test", "Testing", LogMessageType.Whisper));
 		}
 
 		private void NotificationIconClick(object sender, EventArgs e) {
