@@ -133,8 +133,13 @@ namespace PoEWhisperNotifier {
 					NotificationIcon.ShowBalloonTip(5000, Title, (obj.Sender == null ? "" : (obj.Sender + ": ")) + obj.Message, ToolTipIcon.Info);
 				}));
 			}
-			if(Settings.Default.EnableSound)
-				this.SoundPlayer.Play();
+			if (Settings.Default.EnableSound) {
+				try {
+					this.SoundPlayer.Play();
+				} catch (Exception ex) {
+					AppendMessage("<Error playing sound. This usually occurs due to the Content folder being missing.\r\n  Additional Info: " + ex.Message + ">");
+				}
+			}
 			if(Settings.Default.EnableSmtpNotifications) {
 				// Feels wasteful to always reload, but really it should only take a millisecond or less.
 				var SmtpSettings = SmtpDetails.LoadFromSettings();
