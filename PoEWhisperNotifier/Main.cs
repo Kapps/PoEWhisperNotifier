@@ -35,6 +35,7 @@ namespace PoEWhisperNotifier {
 			txtLogPath.TextChanged += txtLogPath_TextChanged;
 			txtLogPath.Click += txtLogPath_Click;
 			txtLogPath.Text = Settings.Default.LogPath;
+			// TODO: Most of these could be easily replaced with a method to map the toolstrip to the setting.
 			tsmNotifyMinimizedOnly.Checked = Settings.Default.NotifyMinimizedOnly;
 			tsmEnableTrayNotifications.Checked = Settings.Default.TrayNotifications;
 			tsmEnableSMTPNotifications.Checked = Settings.Default.EnableSmtpNotifications;
@@ -42,6 +43,7 @@ namespace PoEWhisperNotifier {
 			tsmEnableSound.Checked = Settings.Default.EnableSound;
 			tsmAutoStart.Checked = Settings.Default.AutoStartWhenOpened;
 			tsmMinimizeToTray.Checked = Settings.Default.MinimizeToTray;
+			tsmLogPartyMessages.Checked = Settings.Default.LogPartyMessages;
 			this.Resize += Main_Resize;
 			if (!LogMonitor.IsValidLogPath(txtLogPath.Text)) {
 				string DefaultLogPath;
@@ -116,6 +118,8 @@ namespace PoEWhisperNotifier {
 		}
 		
 		void ProcessMessage(MessageData obj) {
+			if (obj.MessageType == LogMessageType.Party && !Settings.Default.LogPartyMessages)
+				return;
 			if (Settings.Default.NotifyMinimizedOnly && IsPoeActive()) {
 				if(!IdleManager.IsUserIdle) {
 					// If the user isn't idle, replay the message if they do go idle.
@@ -254,6 +258,12 @@ namespace PoEWhisperNotifier {
 		private void tsmEnableSound_Click(object sender, EventArgs e) {
 			tsmEnableSound.Checked = !tsmEnableSound.Checked;
 			Settings.Default.EnableSound = tsmEnableSound.Checked;
+			Settings.Default.Save();
+		}
+
+		private void tsmLogPartyMessages_Click(object sender, EventArgs e) {
+			tsmLogPartyMessages.Checked = !tsmLogPartyMessages.Checked;
+			Settings.Default.LogPartyMessages = tsmLogPartyMessages.Checked;
 			Settings.Default.Save();
 		}
 

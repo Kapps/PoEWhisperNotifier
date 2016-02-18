@@ -142,5 +142,17 @@ namespace PoEWhisperNotifier.Properties {
                 this["AutoStartWhenOpened"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool LogPartyMessages {
+            get {
+                return ((bool)(this["LogPartyMessages"]));
+            }
+            set {
+                this["LogPartyMessages"] = value;
+            }
+        }
     }
 }
