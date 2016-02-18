@@ -54,6 +54,10 @@ namespace PoEWhisperNotifier {
 		/// An unexpected disconnect was received.
 		/// </summary>
 		Disconnect = 2,
+		/// <summary>
+		/// A party message was sent or received.
+		/// </summary>
+		Party = 4
 	}
 
 	/// <summary>
@@ -145,6 +149,24 @@ namespace PoEWhisperNotifier {
 			_LogStream.Dispose();
 		}
 
+		/// <summary>
+		/// Returns the chat symbol that corresponds to messages of the given message type, or an empty string if none does.
+		/// </summary>=
+		public static string ChatSymbolForMessageType(LogMessageType Type) {
+			var KVP = SymbolToMessageType.FirstOrDefault(c => c.Value == Type);
+			return KVP.Key == null ? "" : KVP.Key;
+		}
+
+		/// <summary>
+		/// Returns the message type that corresponds to the given chat symbol, or Unknown if none does.
+		/// </summary>
+		public static LogMessageType MessageTypeForChatSymbol(string ChatSymbol) {
+			LogMessageType Res;
+			if (!SymbolToMessageType.TryGetValue(ChatSymbol, out Res))
+				Res = LogMessageType.Unknown;
+			return Res;
+		}
+
 		private void RunReadLoop() {
 			var Reader = new StreamReader(_LogStream);
 			while(IsMonitoring) {
@@ -155,7 +177,7 @@ namespace PoEWhisperNotifier {
 				string Line = Reader.ReadLine();
 				MessageData Data;
 				Action<MessageData> Ev = null;
-				if(TryParseWhisper(Line, out Data) || TryParseDisconnect(Line, out Data)) {
+				if(TryParseChat(Line, out Data) || TryParseDisconnect(Line, out Data)) {
 					Ev = MessageReceived;
 					if (Ev != null)
 						Ev(Data);
@@ -177,26 +199,30 @@ namespace PoEWhisperNotifier {
 			}
 		}
 
-		private bool TryParseWhisper(string Line, out MessageData Data) {
+		private bool TryParseChat(string Line, out MessageData Data) {
 			Data = default(MessageData);
 			try {
-				var Match = WhisperRegex.Match(Line);
-				if(!Match.Success || Match.Groups.Count != 3)
+				var Match = ChatRegex.Match(Line);
+				if(!Match.Success || Match.Groups.Count != 4)
 					return false;
-				string Username = Match.Groups[1].Value;
-				string Contents = Match.Groups[2].Value;
+				string ChatSymbol = Match.Groups[1].Value;
+				string Username = Match.Groups[2].Value;
+				string Contents = Match.Groups[3].Value;
 				if(String.IsNullOrWhiteSpace(Username) || String.IsNullOrWhiteSpace(Contents))
 					return false;
-				Data = new MessageData(DateTime.Now, Username, Contents, LogMessageType.Whisper);
+				var MessageType = MessageTypeForChatSymbol(ChatSymbol);
+				Data = new MessageData(DateTime.Now, Username, Contents, MessageType);
 				return true;
 			} catch {
 				return false;
 			}
 		}
 
-		// Group 1 = Username, Group 2 = Contents
-		private static readonly Regex WhisperRegex = new Regex(@"^.+\ .+\ .+\ .+\ \[.+\]\ @(.+):\ (.+)$");
+		// Group 1 = Chat Type, Group 2 = Username, Group 3 = Contents
+		private static readonly Regex ChatRegex = new Regex(@"^.+\ .+\ .+\ .+\ \[.+\]\ ([%@])(.+):\ (.+)$");
 		private static readonly Regex DisconnectRegex = new Regex(@"^.+\ .+\ .+\ .+\ \[.+\]\ Abnormal disconnect:(.+)");
+		private static readonly Dictionary<string, LogMessageType> SymbolToMessageType = new Dictionary<string, LogMessageType>() { { "%", LogMessageType.Party }, { "@", LogMessageType.Whisper } };
+
 		private FileStream _LogStream;
 		private Thread _LogThread;
 	}

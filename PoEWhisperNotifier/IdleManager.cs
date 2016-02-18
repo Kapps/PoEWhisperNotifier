@@ -26,6 +26,7 @@ namespace PoEWhisperNotifier {
 		private static extern bool GetLastInputInfo(ref LASTINPUTINFO plii);
 
 		private static readonly TimeSpan MinIdleDelay = TimeSpan.FromMinutes(2.0);
+		//private static readonly TimeSpan MinIdleDelay = TimeSpan.FromSeconds(5.0);
 
 		// TODO: Can merge the below two with LogMonitor.
 
@@ -64,7 +65,8 @@ namespace PoEWhisperNotifier {
 					dwTime = 0
 				};
 				GetLastInputInfo(ref LastInput);
-				var IdleTime = (Environment.TickCount - LastInput.dwTime);
+				// Have to make sure dwTime is same type as TickCount - otherwise signed vs unsigned, which causes issues when TickCount wraps around at 25 days.
+				var IdleTime = unchecked(Environment.TickCount - (int)LastInput.dwTime);
 				return DateTime.Now - TimeSpan.FromMilliseconds(IdleTime);
 			}
 		}

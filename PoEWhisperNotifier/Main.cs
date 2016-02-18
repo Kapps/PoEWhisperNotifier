@@ -114,7 +114,7 @@ namespace PoEWhisperNotifier {
 			IdleManager.BeginMonitoring();
 			AppendMessage("Program started at " + DateTime.Now.ToShortTimeString() + ".");
 		}
-
+		
 		void ProcessMessage(MessageData obj) {
 			if (Settings.Default.NotifyMinimizedOnly && IsPoeActive()) {
 				if(!IdleManager.IsUserIdle) {
@@ -124,7 +124,7 @@ namespace PoEWhisperNotifier {
 				}
 				// Otherwise, they are idle, so process the message anyways.
 			}
-			string StampedMessage = "[" + obj.Date.ToShortTimeString() + "]" + (obj.Sender == null ? "" : (" " + obj.Sender)) + ": " + obj.Message;
+			string StampedMessage = "[" + obj.Date.ToShortTimeString() + "]" + (obj.Sender == null ? "" : (" " + LogMonitor.ChatSymbolForMessageType(obj.MessageType) + obj.Sender)) + ": " + obj.Message;
 			string Title = "Path of Exile " + obj.MessageType;
 			Invoke(new Action(() => AppendMessage(StampedMessage)));
 			if(Settings.Default.TrayNotifications) {
