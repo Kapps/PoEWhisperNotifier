@@ -1,6 +1,6 @@
 PoEWhisperNotifier
 ==================
-PoEWhisperNotifier is a free and open-source tool that runs in the background to notify you of whispers you get in PoE (optionally) while your game is minimized. You can currently be notified through Windows tray notifications, playing a sound, sending an email, or notifying your phone through PushBullet. The program will also record a history of all missed whispers in case you can't immediately get back to PoE. 
+PoEWhisperNotifier is a free and open-source tool that runs in the background to notify you of whispers, party messages (not enabled by default), or abnormal disconnections you get in PoE (optionally) while your game is minimized or you go AFK. You can currently be notified through Windows tray notifications, playing a sound, sending an email, or notifying your phone through PushBullet. The program will also record a history of all missed whispers in case you can't immediately get back to PoE. 
 
 The program works by parsing client.txt as PoE writes to it in realtime. It should be fairly light on resources (does not load all of client.txt and uses very little CPU) and can remain open even while PoE is closed if desired.
 
