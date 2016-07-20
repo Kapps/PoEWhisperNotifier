@@ -205,11 +205,12 @@ namespace PoEWhisperNotifier {
 				var Match = ChatRegex.Match(Line);
 				if(!Match.Success || Match.Groups.Count != 4)
 					return false;
-				string ChatSymbol = Match.Groups[1].Value;
+				string ChatSymbol = Match.Groups[1].Value.FirstOrDefault().ToString();
 				string Username = Match.Groups[2].Value;
 				string Contents = Match.Groups[3].Value;
 				if(String.IsNullOrWhiteSpace(Username) || String.IsNullOrWhiteSpace(Contents))
 					return false;
+				Username = Username.Trim();
 				var MessageType = MessageTypeForChatSymbol(ChatSymbol);
 				Data = new MessageData(DateTime.Now, Username, Contents, MessageType);
 				return true;
@@ -219,7 +220,7 @@ namespace PoEWhisperNotifier {
 		}
 
 		// Group 1 = Chat Type, Group 2 = Username, Group 3 = Contents
-		private static readonly Regex ChatRegex = new Regex(@"^.+\ .+\ .+\ .+\ \[.+\]\ ([%@])(.+):\ (.+)$");
+		private static readonly Regex ChatRegex = new Regex(@"^.+\ .+\ .+\ .+\ \[.+\]\ (%|@From)(.+):\ (.+)$");
 		private static readonly Regex DisconnectRegex = new Regex(@"^.+\ .+\ .+\ .+\ \[.+\]\ Abnormal disconnect:(.+)");
 		private static readonly Dictionary<string, LogMessageType> SymbolToMessageType = new Dictionary<string, LogMessageType>() { { "%", LogMessageType.Party }, { "@", LogMessageType.Whisper } };
 

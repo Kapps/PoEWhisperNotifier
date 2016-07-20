@@ -23,6 +23,10 @@ namespace PoEWhisperNotifier {
 		[DllImport("user32.dll")]
 		public static extern IntPtr GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
 
+		private bool IsMonitoring {
+			get { return this.Monitor != null && this.Monitor.IsMonitoring; }
+		}
+
 		public Main() {
 			InitializeComponent();
 			NotificationIcon.Icon = this.Icon;
@@ -44,6 +48,7 @@ namespace PoEWhisperNotifier {
 			tsmAutoStart.Checked = Settings.Default.AutoStartWhenOpened;
 			tsmMinimizeToTray.Checked = Settings.Default.MinimizeToTray;
 			tsmLogPartyMessages.Checked = Settings.Default.LogPartyMessages;
+			RestoreSize();
 			this.Resize += Main_Resize;
 			if (!LogMonitor.IsValidLogPath(txtLogPath.Text)) {
 				string DefaultLogPath;
@@ -53,7 +58,24 @@ namespace PoEWhisperNotifier {
 					AppendMessage("Unable to figure out client.txt location. You will have to manually set the path.");
 			}
 			if(Settings.Default.AutoStartWhenOpened)
-				Start(true);
+				StartMonitoring(true);
+
+			this.ResizeEnd += OnResizeEnd;
+		}
+
+		private void RestoreSize() {
+			if(Settings.Default.PreviousSize.Width > 50 && Settings.Default.PreviousSize.Height > 50) {
+				this.StartPosition = FormStartPosition.Manual;
+				this.Location = Settings.Default.PreviousLocation;
+				this.Size = Settings.Default.PreviousSize;
+			}
+		}
+
+		private void OnResizeEnd(object sender, EventArgs e) {
+			// This event is called even when the user is only moving the window, not just resizing.
+			Settings.Default.PreviousSize = this.Size;
+			Settings.Default.PreviousLocation = this.Location;
+			Settings.Default.Save();
 		}
 
 		private void NotificationIconClick(object sender, EventArgs e) {
@@ -96,10 +118,10 @@ namespace PoEWhisperNotifier {
 		}
 
 		private void cmdStart_Click(object sender, EventArgs e) {
-			Start(false);
+			StartMonitoring(false);
 		}
 
-		private void Start(bool AutoStarted) {
+		private void StartMonitoring(bool AutoStarted) {
 			if(!LogMonitor.IsValidLogPath(txtLogPath.Text)) {
 				string ErrMsg = "Failed to start " + (AutoStarted ? "automatically " : "") + "as the log path is invalid.";
 				if (AutoStarted)
@@ -108,6 +130,9 @@ namespace PoEWhisperNotifier {
 					MessageBox.Show(ErrMsg);
 				return;
 			}
+			if(new FileInfo(txtLogPath.Text).IsReadOnly) {
+				AppendMessage("Warning: Your client.txt file appears to be readonly. This will likely prevent the program from working.");
+			}
 			cmdStop.Enabled = true;
 			cmdStart.Enabled = false;
 			this.Monitor = new LogMonitor(txtLogPath.Text);
@@ -115,6 +140,15 @@ namespace PoEWhisperNotifier {
 			Monitor.MessageReceived += ProcessMessage;
 			IdleManager.BeginMonitoring();
 			AppendMessage("Program started at " + DateTime.Now.ToShortTimeString() + ".");
+		}
+
+		private void StopMonitoring() {
+			cmdStart.Enabled = true;
+			cmdStop.Enabled = false;
+			this.Monitor.StopMonitoring();
+			IdleManager.StopMonitoring();
+			this.Monitor.MessageReceived -= ProcessMessage;
+			AppendMessage("Program stopped at " + DateTime.Now.ToShortTimeString() + ".");
 		}
 		
 		void ProcessMessage(MessageData obj) {
@@ -211,12 +245,7 @@ namespace PoEWhisperNotifier {
 		}
 
 		private void cmdStop_Click(object sender, EventArgs e) {
-			cmdStart.Enabled = true;
-			cmdStop.Enabled = false;
-			this.Monitor.StopMonitoring();
-			IdleManager.StopMonitoring();
-			this.Monitor.MessageReceived -= ProcessMessage;
-			AppendMessage("Program stopped at " + DateTime.Now.ToShortTimeString() + ".");
+			StopMonitoring();
 		}
 
 		private void exitToolStripMenuItem_Click(object sender, EventArgs e) {
@@ -244,7 +273,7 @@ namespace PoEWhisperNotifier {
 		/// </summary>
 		internal static Process GetPoeProcess() {
 			// This doesn't belong in Main, but oh well.
-			Func<Process, bool> IsPoE = (c => c.MainWindowTitle.Contains("Path of Exile") || c.ProcessName.Contains("PathOfExile"));
+			Func<Process, bool> IsPoE = (c => c.MainWindowTitle.Equals("Path of Exile", StringComparison.InvariantCultureIgnoreCase) || c.ProcessName.Contains("PathOfExile"));
 			return Process.GetProcesses().FirstOrDefault(IsPoE);
 		}
 
@@ -310,6 +339,59 @@ namespace PoEWhisperNotifier {
 
 		private void configureSMTPToolStripMenuItem_Click(object sender, EventArgs e) {
 			ShowSmtpDialog();
+		}
+
+		private void trimClienttxtToolStripMenuItem_Click(object sender, EventArgs e) {
+			string LogPath = txtLogPath.Text;
+			if (!LogMonitor.IsValidLogPath(LogPath)) {
+				MessageBox.Show("You must select a valid client.txt first.");
+				return;
+			}
+			var LogLength = new FileInfo(LogPath).Length;
+			long DesiredLength = 10 * 1024 * 1024;
+			if(LogLength <= DesiredLength) {
+				MessageBox.Show("Your client.txt is already below 10MB. No action has been taken.");
+				return;
+			}
+			if (MessageBox.Show("This will remove old data from your client.txt (currently " + LogLength / (1024 * 1024) + "MB) to reduce it to 10MB. Are you sure you wish to do this? This process is NOT reversible.", "Confirm Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes) {
+				return;
+			}
+			if(GetPoeProcess() != null) {
+				MessageBox.Show("You must close Path of Exile for this operation to work.", "Failed to Trim Log", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				return;
+			}
+			bool RestartLog = Monitor.IsMonitoring;
+			if (Monitor.IsMonitoring)
+				StopMonitoring();
+			try {
+				string CopyLocation = LogPath + ".new";
+				string BackupLocation = LogPath + ".old";
+				if(File.Exists(BackupLocation)) {
+					MessageBox.Show("A log file already appears to exist from before. Please delete it if it is not valid.");
+					Process.Start(new ProcessStartInfo() {
+						UseShellExecute = true,
+						Verb = "open",
+						FileName = Path.GetDirectoryName(BackupLocation)
+					});
+					return;
+				}
+				using(var LogFile = File.Open(LogPath, FileMode.Open, FileAccess.ReadWrite, FileShare.Delete)) {
+					LogFile.Seek(-DesiredLength, SeekOrigin.End);
+					if (File.Exists(CopyLocation))
+						File.Delete(CopyLocation);
+					using (var OutFile = File.CreateText(CopyLocation))
+						LogFile.CopyTo(OutFile.BaseStream);
+					File.Move(LogPath, BackupLocation);
+					File.Move(CopyLocation, LogPath);
+					File.Delete(BackupLocation);
+				}
+				AppendMessage("Trimmed log file from " + (LogLength / (1024 * 1024)) + "MB to 10MB.");
+				MessageBox.Show("Done. Your log file has been trimmed.");
+			} catch (Exception ex) {
+				MessageBox.Show("Failed to trim log file:\r\n\t" + ex.Message.Replace("\n", "\n\t") + "\r\nIf your client.txt was modified, you may find a backup at client.txt.old.");
+			}
+			if (RestartLog)
+				StartMonitoring(false);
 		}
 
 		private void ShowPushBulletDialog() {

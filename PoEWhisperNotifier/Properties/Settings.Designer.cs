@@ -154,5 +154,29 @@ namespace PoEWhisperNotifier.Properties {
                 this["LogPartyMessages"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0, 0")]
+        public global::System.Drawing.Size PreviousSize {
+            get {
+                return ((global::System.Drawing.Size)(this["PreviousSize"]));
+            }
+            set {
+                this["PreviousSize"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0, 0")]
+        public global::System.Drawing.Point PreviousLocation {
+            get {
+                return ((global::System.Drawing.Point)(this["PreviousLocation"]));
+            }
+            set {
+                this["PreviousLocation"] = value;
+            }
+        }
     }
 }

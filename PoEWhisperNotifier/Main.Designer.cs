@@ -51,6 +51,8 @@
 			this.configureSMTPToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.configurePushBulletToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.NotificationIcon = new System.Windows.Forms.NotifyIcon(this.components);
+			this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.tsmTrimLogFile = new System.Windows.Forms.ToolStripMenuItem();
 			this.tableLayoutPanel1.SuspendLayout();
 			this.menuStrip1.SuspendLayout();
 			this.SuspendLayout();
@@ -101,9 +103,9 @@
 			// 
 			this.cmdStop.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.cmdStop.Enabled = false;
-			this.cmdStop.Location = new System.Drawing.Point(855, 760);
+			this.cmdStop.Location = new System.Drawing.Point(739, 729);
 			this.cmdStop.Name = "cmdStop";
-			this.cmdStop.Size = new System.Drawing.Size(109, 40);
+			this.cmdStop.Size = new System.Drawing.Size(161, 71);
 			this.cmdStop.TabIndex = 2;
 			this.cmdStop.Text = "Stop";
 			this.cmdStop.UseVisualStyleBackColor = true;
@@ -112,9 +114,9 @@
 			// cmdStart
 			// 
 			this.cmdStart.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this.cmdStart.Location = new System.Drawing.Point(970, 760);
+			this.cmdStart.Location = new System.Drawing.Point(906, 729);
 			this.cmdStart.Name = "cmdStart";
-			this.cmdStart.Size = new System.Drawing.Size(97, 40);
+			this.cmdStart.Size = new System.Drawing.Size(161, 71);
 			this.cmdStart.TabIndex = 3;
 			this.cmdStart.Text = "Start";
 			this.cmdStart.UseVisualStyleBackColor = true;
@@ -124,10 +126,11 @@
 			// 
 			this.tableLayoutPanel1.SetColumnSpan(this.rtbHistory, 3);
 			this.rtbHistory.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.rtbHistory.HideSelection = false;
 			this.rtbHistory.Location = new System.Drawing.Point(3, 54);
 			this.rtbHistory.Name = "rtbHistory";
 			this.rtbHistory.ReadOnly = true;
-			this.rtbHistory.Size = new System.Drawing.Size(1064, 700);
+			this.rtbHistory.Size = new System.Drawing.Size(1064, 669);
 			this.rtbHistory.TabIndex = 4;
 			this.rtbHistory.Text = "";
 			// 
@@ -136,7 +139,8 @@
 			this.menuStrip1.ImageScalingSize = new System.Drawing.Size(40, 40);
 			this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
-            this.editToolStripMenuItem});
+            this.editToolStripMenuItem,
+            this.toolsToolStripMenuItem});
 			this.menuStrip1.Location = new System.Drawing.Point(0, 0);
 			this.menuStrip1.Name = "menuStrip1";
 			this.menuStrip1.Size = new System.Drawing.Size(1071, 52);
@@ -154,7 +158,7 @@
 			// exitToolStripMenuItem
 			// 
 			this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-			this.exitToolStripMenuItem.Size = new System.Drawing.Size(179, 46);
+			this.exitToolStripMenuItem.Size = new System.Drawing.Size(327, 46);
 			this.exitToolStripMenuItem.Text = "E&xit";
 			this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
 			// 
@@ -250,10 +254,25 @@
 			this.NotificationIcon.Text = "PoE Whisper Notifier";
 			this.NotificationIcon.Visible = true;
 			// 
+			// toolsToolStripMenuItem
+			// 
+			this.toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.tsmTrimLogFile});
+			this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
+			this.toolsToolStripMenuItem.Size = new System.Drawing.Size(99, 48);
+			this.toolsToolStripMenuItem.Text = "&Tools";
+			// 
+			// tsmTrimLogFile
+			// 
+			this.tsmTrimLogFile.Name = "tsmTrimLogFile";
+			this.tsmTrimLogFile.Size = new System.Drawing.Size(327, 46);
+			this.tsmTrimLogFile.Text = "Trim Client.txt";
+			this.tsmTrimLogFile.Click += new System.EventHandler(this.trimClienttxtToolStripMenuItem_Click);
+			// 
 			// Main
 			// 
-			this.AutoScaleDimensions = new System.Drawing.SizeF(19F, 38F);
-			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.AutoScaleDimensions = new System.Drawing.SizeF(240F, 240F);
+			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
 			this.ClientSize = new System.Drawing.Size(1071, 855);
 			this.Controls.Add(this.tableLayoutPanel1);
 			this.Controls.Add(this.menuStrip1);
@@ -296,6 +315,8 @@
 		private System.Windows.Forms.ToolStripMenuItem tsmAutoStart;
 		private System.Windows.Forms.ToolStripMenuItem tsmMinimizeToTray;
 		private System.Windows.Forms.ToolStripMenuItem tsmLogPartyMessages;
+		private System.Windows.Forms.ToolStripMenuItem toolsToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem tsmTrimLogFile;
 	}
 }
 
