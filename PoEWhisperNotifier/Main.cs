@@ -48,7 +48,8 @@ namespace PoEWhisperNotifier {
 			tsmAutoStart.Checked = Settings.Default.AutoStartWhenOpened;
 			tsmMinimizeToTray.Checked = Settings.Default.MinimizeToTray;
 			tsmLogPartyMessages.Checked = Settings.Default.LogPartyMessages;
-			RestoreSize();
+            tsmLogGuildMessages.Checked = Settings.Default.LogGuildMessages;
+            RestoreSize();
 			this.Resize += Main_Resize;
 			if (!LogMonitor.IsValidLogPath(txtLogPath.Text)) {
 				string DefaultLogPath;
@@ -154,7 +155,9 @@ namespace PoEWhisperNotifier {
 		void ProcessMessage(MessageData obj) {
 			if (obj.MessageType == LogMessageType.Party && !Settings.Default.LogPartyMessages)
 				return;
-			if (Settings.Default.NotifyMinimizedOnly && IsPoeActive()) {
+            if (obj.MessageType == LogMessageType.Guild && !Settings.Default.LogGuildMessages)
+                return;
+            if (Settings.Default.NotifyMinimizedOnly && IsPoeActive()) {
 				if(!IdleManager.IsUserIdle) {
 					// If the user isn't idle, replay the message if they do go idle.
 					IdleManager.AddIdleAction(() => ProcessMessage(obj));
@@ -295,8 +298,14 @@ namespace PoEWhisperNotifier {
 			Settings.Default.LogPartyMessages = tsmLogPartyMessages.Checked;
 			Settings.Default.Save();
 		}
+        private void tsmLogGuildMessages_Click(object sender, EventArgs e)
+        {
+            tsmLogGuildMessages.Checked = !tsmLogGuildMessages.Checked;
+            Settings.Default.LogGuildMessages = tsmLogGuildMessages.Checked;
+            Settings.Default.Save();
+        }
 
-		private void tsmAutoStart_Click(object sender, EventArgs e) {
+        private void tsmAutoStart_Click(object sender, EventArgs e) {
 			tsmAutoStart.Checked = !tsmAutoStart.Checked;
 			Settings.Default.AutoStartWhenOpened = tsmAutoStart.Checked;
 			Settings.Default.Save();

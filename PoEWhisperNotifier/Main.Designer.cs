@@ -42,7 +42,8 @@
 			this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.tsmNotifyMinimizedOnly = new System.Windows.Forms.ToolStripMenuItem();
 			this.tsmLogPartyMessages = new System.Windows.Forms.ToolStripMenuItem();
-			this.tsmEnableTrayNotifications = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmLogGuildMessages = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmEnableTrayNotifications = new System.Windows.Forms.ToolStripMenuItem();
 			this.tsmEnableSound = new System.Windows.Forms.ToolStripMenuItem();
 			this.tsmEnableSMTPNotifications = new System.Windows.Forms.ToolStripMenuItem();
 			this.tsmEnablePushBullet = new System.Windows.Forms.ToolStripMenuItem();
@@ -167,6 +168,7 @@
 			this.editToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.tsmNotifyMinimizedOnly,
             this.tsmLogPartyMessages,
+            this.tsmLogGuildMessages,
             this.tsmEnableTrayNotifications,
             this.tsmEnableSound,
             this.tsmEnableSMTPNotifications,
@@ -192,10 +194,17 @@
 			this.tsmLogPartyMessages.Size = new System.Drawing.Size(542, 46);
 			this.tsmLogPartyMessages.Text = "Include Part&y Messages";
 			this.tsmLogPartyMessages.Click += new System.EventHandler(this.tsmLogPartyMessages_Click);
-			// 
-			// tsmEnableTrayNotifications
-			// 
-			this.tsmEnableTrayNotifications.Name = "tsmEnableTrayNotifications";
+            // 
+            // tsmLogGuildMessages
+            // 
+            this.tsmLogGuildMessages.Name = "tsmLogGuildMessages";
+            this.tsmLogGuildMessages.Size = new System.Drawing.Size(542, 46);
+            this.tsmLogGuildMessages.Text = "Include Guil&d Messages";
+            this.tsmLogGuildMessages.Click += new System.EventHandler(this.tsmLogGuildMessages_Click);
+            // 
+            // tsmEnableTrayNotifications
+            // 
+            this.tsmEnableTrayNotifications.Name = "tsmEnableTrayNotifications";
 			this.tsmEnableTrayNotifications.Size = new System.Drawing.Size(542, 46);
 			this.tsmEnableTrayNotifications.Text = "Enable &Tray Notifications";
 			this.tsmEnableTrayNotifications.Click += new System.EventHandler(this.tsmEnableTrayNotifications_Click);
@@ -315,7 +324,8 @@
 		private System.Windows.Forms.ToolStripMenuItem tsmAutoStart;
 		private System.Windows.Forms.ToolStripMenuItem tsmMinimizeToTray;
 		private System.Windows.Forms.ToolStripMenuItem tsmLogPartyMessages;
-		private System.Windows.Forms.ToolStripMenuItem toolsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem tsmLogGuildMessages;
+        private System.Windows.Forms.ToolStripMenuItem toolsToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem tsmTrimLogFile;
 	}
 }
