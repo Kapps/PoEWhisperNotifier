@@ -57,8 +57,13 @@ namespace PoEWhisperNotifier {
 		/// <summary>
 		/// A party message was sent or received.
 		/// </summary>
-		Party = 4
-	}
+		Party = 4,
+        /// <summary>
+        /// A guild message was sent or received.
+        /// </summary>
+        Guild = 5
+
+    }
 
 	/// <summary>
 	/// Monitors a log file for changes in the form of appended lines.
@@ -220,9 +225,9 @@ namespace PoEWhisperNotifier {
 		}
 
 		// Group 1 = Chat Type, Group 2 = Username, Group 3 = Contents
-		private static readonly Regex ChatRegex = new Regex(@"^.+\ .+\ .+\ .+\ \[.+\]\ (%|@From|@От кого|@De)(.+):\ (.+)$");
+		private static readonly Regex ChatRegex = new Regex(@"^.+\ .+\ .+\ .+\ \[.+\]\ (%|@From|@От кого|@De|&)(.+):\ (.+)$");
 		private static readonly Regex DisconnectRegex = new Regex(@"^.+\ .+\ .+\ .+\ \[.+\]\ Abnormal disconnect:(.+)");
-		private static readonly Dictionary<string, LogMessageType> SymbolToMessageType = new Dictionary<string, LogMessageType>() { { "%", LogMessageType.Party }, { "@", LogMessageType.Whisper } };
+		private static readonly Dictionary<string, LogMessageType> SymbolToMessageType = new Dictionary<string, LogMessageType>() { { "%", LogMessageType.Party }, { "@", LogMessageType.Whisper }, { "&", LogMessageType.Guild } };
 
 		private FileStream _LogStream;
 		private Thread _LogThread;
