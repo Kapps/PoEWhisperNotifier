@@ -12,6 +12,7 @@ using System.Net;
 using System.Net.Mail;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -191,16 +192,24 @@ namespace PoEWhisperNotifier {
 					IdleManager.AddIdleAction(SmtpAct);
 			}
 			if(Settings.Default.EnablePushbullet) {
-				var PbSettings = PushBulletDetails.LoadFromSettings();
-				var PbAct = CheckedAction("PushBullet", () => {
-					var Client = new PushBulletClient(PbSettings);
-					Client.SendPush(Title, StampedMessage);
-				});
-				if (!PbSettings.NotifyOnlyIfIdle)
-					PbAct();
-				else
-					IdleManager.AddIdleAction(PbAct);
-			}
+                var PbSettings = PushBulletDetails.LoadFromSettings();
+                Regex Pattern = null;
+                Match matches = null;
+                if (!String.IsNullOrWhiteSpace(PbSettings.NotifyOnlyIfMatches)) {
+                    Pattern = new Regex(PbSettings.NotifyOnlyIfMatches);
+                    matches = Pattern.Match(obj.Message);
+                }
+                if (Pattern == null || ((Pattern != null) && matches.Success)) {
+                    var PbAct = CheckedAction("PushBullet", () => {
+                        var Client = new PushBulletClient(PbSettings);
+                        Client.SendPush(Title, StampedMessage);
+                    });
+                    if (!PbSettings.NotifyOnlyIfIdle)
+                        PbAct();
+                    else
+                        IdleManager.AddIdleAction(PbAct);
+                }
+            }
 		}
 
 		// Wraps an Action in a try-catch and appends to the history any errors with it.
