@@ -37,6 +37,11 @@ namespace PoEWhisperNotifier {
 		[Description("Your username with the mail service (such as Gmail account name)")]
 		public string Username { get; set; }
 		/// <summary>
+		/// The email address to send from.
+		/// </summary>
+		[Description("The email address that this message is being sent from.")]
+		public string FromEmail { get; set; }
+		/// <summary>
 		/// Indicates whether the user should only be notified if not at their computer.
 		/// </summary>
 		[DisplayName("Notify Only If Idle")]
@@ -72,7 +77,7 @@ namespace PoEWhisperNotifier {
 		public bool IsValid {
 			get {
 				return !String.IsNullOrWhiteSpace(Username) && !String.IsNullOrWhiteSpace(Password) && !String.IsNullOrWhiteSpace(Target)
-					&& !String.IsNullOrWhiteSpace(SmtpServer) && SmtpPort > 0;
+					&& !String.IsNullOrWhiteSpace(SmtpServer) && SmtpPort > 0 && !String.IsNullOrWhiteSpace(FromEmail);
 			}
 		}
 		/// <summary>
@@ -121,12 +126,26 @@ namespace PoEWhisperNotifier {
 				var StoredDetailBytes = Convert.FromBase64String(StoredDetailBase64);
 				using(var MS = new MemoryStream(StoredDetailBytes)) {
 					var Formatter = new BinaryFormatter();
-					return (SmtpDetails)Formatter.Deserialize(MS);
+					var Res = (SmtpDetails)Formatter.Deserialize(MS);
+					if(String.IsNullOrWhiteSpace(Res.FromEmail) && !String.IsNullOrWhiteSpace(Res.Username)) {
+						string Host = GuessHost(Res.SmtpServer);
+						Res.FromEmail = $"{Res.Username}@{Host}";
+					}
+					return Res;
 				}
 			} catch {
 				MessageBox.Show("Failed to deserialize SMTP settings. Reverting to default settings.");
 				return new SmtpDetails();
 			}
+		}
+
+		private static string GuessHost(string SmtpHost) {
+			if (!SmtpHost.Contains("."))
+				throw new ArgumentException("Invalid SMTP server. Ex: smtp.gmail.com");
+			int TldStart = SmtpHost.LastIndexOf('.');
+			string TLD = SmtpHost.Substring(TldStart + 1);
+			SmtpHost = SmtpHost.Substring(0, TldStart);
+			return (SmtpHost.Contains(".") ? SmtpHost.Substring(SmtpHost.LastIndexOf('.') + 1) : SmtpHost) + "." + TLD;
 		}
 
 		private byte[] _PasswordEntropy;

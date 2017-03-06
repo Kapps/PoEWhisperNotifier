@@ -154,7 +154,7 @@ namespace PoEWhisperNotifier.Properties {
                 this["LogPartyMessages"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
@@ -188,6 +188,18 @@ namespace PoEWhisperNotifier.Properties {
             }
             set {
                 this["PreviousLocation"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool FlashTaskbar {
+            get {
+                return ((bool)(this["FlashTaskbar"]));
+            }
+            set {
+                this["FlashTaskbar"] = value;
             }
         }
     }

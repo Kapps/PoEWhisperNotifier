@@ -23,6 +23,7 @@ namespace PoEWhisperNotifier {
 		[DllImport("user32.dll")]
 		public static extern IntPtr GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
 
+ 
 		private bool IsMonitoring {
 			get { return this.Monitor != null && this.Monitor.IsMonitoring; }
 		}
@@ -151,7 +152,12 @@ namespace PoEWhisperNotifier {
 			this.Monitor.MessageReceived -= ProcessMessage;
 			AppendMessage("Program stopped at " + DateTime.Now.ToShortTimeString() + ".");
 		}
-		
+
+		private void testNotificationToolStripMenuItem_Click(object sender, EventArgs e) {
+			var Message = new MessageData(DateTime.Now, "Tester", "This is a fake whisper for testing notifications.", LogMessageType.Whisper);
+			SendNotification(Message, true);
+		}
+
 		void ProcessMessage(MessageData obj) {
 			if (obj.MessageType == LogMessageType.Party && !Settings.Default.LogPartyMessages)
 				return;
@@ -165,13 +171,17 @@ namespace PoEWhisperNotifier {
 				}
 				// Otherwise, they are idle, so process the message anyways.
 			}
-			string StampedMessage = "[" + obj.Date.ToShortTimeString() + "]" + (obj.Sender == null ? "" : (" " + LogMonitor.ChatSymbolForMessageType(obj.MessageType) + obj.Sender)) + ": " + obj.Message;
-			string Title = "Path of Exile " + obj.MessageType;
+			SendNotification(obj, false);
+		}
+
+		private void SendNotification(MessageData Message, bool AssumeInactive) {
+			string StampedMessage = "[" + Message.Date.ToShortTimeString() + "]" + (Message.Sender == null ? "" : (" " + LogMonitor.ChatSymbolForMessageType(Message.MessageType) + Message.Sender)) + ": " + Message.Message;
+			string Title = "Path of Exile " + Message.MessageType;
 			Invoke(new Action(() => AppendMessage(StampedMessage)));
-			if(Settings.Default.TrayNotifications) {
+			if (Settings.Default.TrayNotifications) {
 				Invoke(new Action(() => {
 					NotificationIcon.Visible = true;
-					NotificationIcon.ShowBalloonTip(5000, Title, (obj.Sender == null ? "" : (obj.Sender + ": ")) + obj.Message, ToolTipIcon.Info);
+					NotificationIcon.ShowBalloonTip(5000, Title, (Message.Sender == null ? "" : (Message.Sender + ": ")) + Message.Message, ToolTipIcon.Info);
 				}));
 			}
 			if (Settings.Default.EnableSound) {
@@ -181,25 +191,34 @@ namespace PoEWhisperNotifier {
 					AppendMessage("<Error playing sound. This usually occurs due to the Content folder being missing.\r\n  Additional Info: " + ex.Message + ">");
 				}
 			}
-			if(Settings.Default.EnableSmtpNotifications) {
+			if (Settings.Default.EnableSmtpNotifications) {
 				// Feels wasteful to always reload, but really it should only take a millisecond or less.
 				var SmtpSettings = SmtpDetails.LoadFromSettings();
 				var SmtpAct = CheckedAction("SMTP", () => SendSmtpNotification(SmtpSettings, StampedMessage));
-				if (!SmtpSettings.NotifyOnlyIfIdle)
+				if (!SmtpSettings.NotifyOnlyIfIdle || AssumeInactive)
 					SmtpAct();
 				else
 					IdleManager.AddIdleAction(SmtpAct);
 			}
-			if(Settings.Default.EnablePushbullet) {
+			if (Settings.Default.EnablePushbullet) {
 				var PbSettings = PushBulletDetails.LoadFromSettings();
 				var PbAct = CheckedAction("PushBullet", () => {
 					var Client = new PushBulletClient(PbSettings);
 					Client.SendPush(Title, StampedMessage);
 				});
-				if (!PbSettings.NotifyOnlyIfIdle)
+				if (!PbSettings.NotifyOnlyIfIdle || AssumeInactive)
 					PbAct();
 				else
 					IdleManager.AddIdleAction(PbAct);
+			}
+			if (Settings.Default.FlashTaskbar && (!IsPoeActive() || AssumeInactive)) {
+				var PoeProcess = GetPoeProcess();
+				if (PoeProcess != null) {
+					var FlashAct = CheckedAction("Taskbar Flash", () => WindowFlasher.FlashWindow(PoeProcess.MainWindowHandle, FlashStyle.All));
+					FlashAct();
+				} else {
+					AppendMessage("<Could not find the PoE process to flash the taskbar>");
+				}
 			}
 		}
 
@@ -226,8 +245,7 @@ namespace PoEWhisperNotifier {
 				Client.Port = SmtpSettings.SmtpPort;
 				Client.EnableSsl = true;
 				Client.DeliveryMethod = SmtpDeliveryMethod.Network;
-				string FromAddress = SmtpSettings.Username + "@" + GuessHost(SmtpSettings.SmtpServer);
-				using(var Message = new MailMessage(FromAddress, SmtpSettings.Target)) {
+				using(var Message = new MailMessage(SmtpSettings.FromEmail, SmtpSettings.Target)) {
 					Message.Subject = "Path of Exile Whisper Notification";
 					// Limit messages to around 120 characters, some phone providers don't like more.
 					Message.Body = StampedMessage;
@@ -236,15 +254,6 @@ namespace PoEWhisperNotifier {
 					Client.Send(Message);
 				}
 			};
-		}
-
-		private string GuessHost(string SmtpHost) {
-			if(!SmtpHost.Contains("."))
-				throw new ArgumentException("Invalid SMTP server. Ex: smtp.gmail.com");
-			int TldStart = SmtpHost.LastIndexOf('.');
-			string TLD = SmtpHost.Substring(TldStart + 1);
-			SmtpHost = SmtpHost.Substring(0, TldStart);
-			return (SmtpHost.Contains(".") ? SmtpHost.Substring(SmtpHost.LastIndexOf('.') + 1) : SmtpHost) + "." + TLD;
 		}
 
 		private void cmdStop_Click(object sender, EventArgs e) {
@@ -276,7 +285,7 @@ namespace PoEWhisperNotifier {
 		/// </summary>
 		internal static Process GetPoeProcess() {
 			// This doesn't belong in Main, but oh well.
-			Func<Process, bool> IsPoE = (c => c.MainWindowTitle.Equals("Path of Exile", StringComparison.InvariantCultureIgnoreCase) || c.ProcessName.Contains("PathOfExile"));
+			Func<Process, bool> IsPoE = (c => c.MainWindowTitle.Equals("Path of Exile", StringComparison.InvariantCultureIgnoreCase) && c.ProcessName.Contains("PathOfExile"));
 			return Process.GetProcesses().FirstOrDefault(IsPoE);
 		}
 
@@ -428,6 +437,6 @@ namespace PoEWhisperNotifier {
 		}
 
 		private SoundPlayer SoundPlayer = new SoundPlayer("Content\\notify.wav");
-		private LogMonitor Monitor;
+		private LogMonitor Monitor;		
 	}
 }

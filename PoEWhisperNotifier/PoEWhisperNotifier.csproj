@@ -78,6 +78,7 @@
     <Compile Include="PushBulletDetails.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="SmtpDetails.cs" />
+    <Compile Include="WindowFlasher.cs" />
     <EmbeddedResource Include="ConfigurePushBulletDialog.resx">
       <DependentUpon>ConfigurePushBulletDialog.cs</DependentUpon>
     </EmbeddedResource>

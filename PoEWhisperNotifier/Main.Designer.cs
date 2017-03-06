@@ -42,8 +42,8 @@
 			this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.tsmNotifyMinimizedOnly = new System.Windows.Forms.ToolStripMenuItem();
 			this.tsmLogPartyMessages = new System.Windows.Forms.ToolStripMenuItem();
-            this.tsmLogGuildMessages = new System.Windows.Forms.ToolStripMenuItem();
-            this.tsmEnableTrayNotifications = new System.Windows.Forms.ToolStripMenuItem();
+			this.tsmLogGuildMessages = new System.Windows.Forms.ToolStripMenuItem();
+			this.tsmEnableTrayNotifications = new System.Windows.Forms.ToolStripMenuItem();
 			this.tsmEnableSound = new System.Windows.Forms.ToolStripMenuItem();
 			this.tsmEnableSMTPNotifications = new System.Windows.Forms.ToolStripMenuItem();
 			this.tsmEnablePushBullet = new System.Windows.Forms.ToolStripMenuItem();
@@ -51,9 +51,10 @@
 			this.tsmMinimizeToTray = new System.Windows.Forms.ToolStripMenuItem();
 			this.configureSMTPToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.configurePushBulletToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.NotificationIcon = new System.Windows.Forms.NotifyIcon(this.components);
 			this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.tsmTrimLogFile = new System.Windows.Forms.ToolStripMenuItem();
+			this.NotificationIcon = new System.Windows.Forms.NotifyIcon(this.components);
+			this.testNotificationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.tableLayoutPanel1.SuspendLayout();
 			this.menuStrip1.SuspendLayout();
 			this.SuspendLayout();
@@ -159,7 +160,7 @@
 			// exitToolStripMenuItem
 			// 
 			this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-			this.exitToolStripMenuItem.Size = new System.Drawing.Size(327, 46);
+			this.exitToolStripMenuItem.Size = new System.Drawing.Size(178, 46);
 			this.exitToolStripMenuItem.Text = "E&xit";
 			this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
 			// 
@@ -184,89 +185,85 @@
 			// tsmNotifyMinimizedOnly
 			// 
 			this.tsmNotifyMinimizedOnly.Name = "tsmNotifyMinimizedOnly";
-			this.tsmNotifyMinimizedOnly.Size = new System.Drawing.Size(542, 46);
+			this.tsmNotifyMinimizedOnly.Size = new System.Drawing.Size(541, 46);
 			this.tsmNotifyMinimizedOnly.Text = "Notify Only When &Minimized";
 			this.tsmNotifyMinimizedOnly.Click += new System.EventHandler(this.notifyOnlyWhenMinimizedToolStripMenuItem_Click);
 			// 
 			// tsmLogPartyMessages
 			// 
 			this.tsmLogPartyMessages.Name = "tsmLogPartyMessages";
-			this.tsmLogPartyMessages.Size = new System.Drawing.Size(542, 46);
+			this.tsmLogPartyMessages.Size = new System.Drawing.Size(541, 46);
 			this.tsmLogPartyMessages.Text = "Include Part&y Messages";
 			this.tsmLogPartyMessages.Click += new System.EventHandler(this.tsmLogPartyMessages_Click);
-            // 
-            // tsmLogGuildMessages
-            // 
-            this.tsmLogGuildMessages.Name = "tsmLogGuildMessages";
-            this.tsmLogGuildMessages.Size = new System.Drawing.Size(542, 46);
-            this.tsmLogGuildMessages.Text = "Include Guil&d Messages";
-            this.tsmLogGuildMessages.Click += new System.EventHandler(this.tsmLogGuildMessages_Click);
-            // 
-            // tsmEnableTrayNotifications
-            // 
-            this.tsmEnableTrayNotifications.Name = "tsmEnableTrayNotifications";
-			this.tsmEnableTrayNotifications.Size = new System.Drawing.Size(542, 46);
+			// 
+			// tsmLogGuildMessages
+			// 
+			this.tsmLogGuildMessages.Name = "tsmLogGuildMessages";
+			this.tsmLogGuildMessages.Size = new System.Drawing.Size(541, 46);
+			this.tsmLogGuildMessages.Text = "Include Guil&d Messages";
+			this.tsmLogGuildMessages.Click += new System.EventHandler(this.tsmLogGuildMessages_Click);
+			// 
+			// tsmEnableTrayNotifications
+			// 
+			this.tsmEnableTrayNotifications.Name = "tsmEnableTrayNotifications";
+			this.tsmEnableTrayNotifications.Size = new System.Drawing.Size(541, 46);
 			this.tsmEnableTrayNotifications.Text = "Enable &Tray Notifications";
 			this.tsmEnableTrayNotifications.Click += new System.EventHandler(this.tsmEnableTrayNotifications_Click);
 			// 
 			// tsmEnableSound
 			// 
 			this.tsmEnableSound.Name = "tsmEnableSound";
-			this.tsmEnableSound.Size = new System.Drawing.Size(542, 46);
+			this.tsmEnableSound.Size = new System.Drawing.Size(541, 46);
 			this.tsmEnableSound.Text = "Enable S&ound";
 			this.tsmEnableSound.Click += new System.EventHandler(this.tsmEnableSound_Click);
 			// 
 			// tsmEnableSMTPNotifications
 			// 
 			this.tsmEnableSMTPNotifications.Name = "tsmEnableSMTPNotifications";
-			this.tsmEnableSMTPNotifications.Size = new System.Drawing.Size(542, 46);
+			this.tsmEnableSMTPNotifications.Size = new System.Drawing.Size(541, 46);
 			this.tsmEnableSMTPNotifications.Text = "Enable &SMTP Notifications";
 			this.tsmEnableSMTPNotifications.Click += new System.EventHandler(this.tsmEnableSMTPNotifications_Click);
 			// 
 			// tsmEnablePushBullet
 			// 
 			this.tsmEnablePushBullet.Name = "tsmEnablePushBullet";
-			this.tsmEnablePushBullet.Size = new System.Drawing.Size(542, 46);
+			this.tsmEnablePushBullet.Size = new System.Drawing.Size(541, 46);
 			this.tsmEnablePushBullet.Text = "Enable &PushBullet Notifications";
 			this.tsmEnablePushBullet.Click += new System.EventHandler(this.tsmEnablePushbullet_Click);
 			// 
 			// tsmAutoStart
 			// 
 			this.tsmAutoStart.Name = "tsmAutoStart";
-			this.tsmAutoStart.Size = new System.Drawing.Size(542, 46);
+			this.tsmAutoStart.Size = new System.Drawing.Size(541, 46);
 			this.tsmAutoStart.Text = "&Autostart When Opened";
 			this.tsmAutoStart.Click += new System.EventHandler(this.tsmAutoStart_Click);
 			// 
 			// tsmMinimizeToTray
 			// 
 			this.tsmMinimizeToTray.Name = "tsmMinimizeToTray";
-			this.tsmMinimizeToTray.Size = new System.Drawing.Size(542, 46);
+			this.tsmMinimizeToTray.Size = new System.Drawing.Size(541, 46);
 			this.tsmMinimizeToTray.Text = "M&inimize to System Tray";
 			this.tsmMinimizeToTray.Click += new System.EventHandler(this.tsmMinimizeToTray_Click);
 			// 
 			// configureSMTPToolStripMenuItem
 			// 
 			this.configureSMTPToolStripMenuItem.Name = "configureSMTPToolStripMenuItem";
-			this.configureSMTPToolStripMenuItem.Size = new System.Drawing.Size(542, 46);
+			this.configureSMTPToolStripMenuItem.Size = new System.Drawing.Size(541, 46);
 			this.configureSMTPToolStripMenuItem.Text = "Configure SMTP";
 			this.configureSMTPToolStripMenuItem.Click += new System.EventHandler(this.configureSMTPToolStripMenuItem_Click);
 			// 
 			// configurePushBulletToolStripMenuItem
 			// 
 			this.configurePushBulletToolStripMenuItem.Name = "configurePushBulletToolStripMenuItem";
-			this.configurePushBulletToolStripMenuItem.Size = new System.Drawing.Size(542, 46);
+			this.configurePushBulletToolStripMenuItem.Size = new System.Drawing.Size(541, 46);
 			this.configurePushBulletToolStripMenuItem.Text = "Configure PushBullet";
 			this.configurePushBulletToolStripMenuItem.Click += new System.EventHandler(this.configurePushBulletToolStripMenuItem_Click);
-			// 
-			// NotificationIcon
-			// 
-			this.NotificationIcon.Text = "PoE Whisper Notifier";
-			this.NotificationIcon.Visible = true;
 			// 
 			// toolsToolStripMenuItem
 			// 
 			this.toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.tsmTrimLogFile});
+            this.tsmTrimLogFile,
+            this.testNotificationToolStripMenuItem});
 			this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
 			this.toolsToolStripMenuItem.Size = new System.Drawing.Size(99, 48);
 			this.toolsToolStripMenuItem.Text = "&Tools";
@@ -274,9 +271,21 @@
 			// tsmTrimLogFile
 			// 
 			this.tsmTrimLogFile.Name = "tsmTrimLogFile";
-			this.tsmTrimLogFile.Size = new System.Drawing.Size(327, 46);
+			this.tsmTrimLogFile.Size = new System.Drawing.Size(346, 46);
 			this.tsmTrimLogFile.Text = "Trim Client.txt";
 			this.tsmTrimLogFile.Click += new System.EventHandler(this.trimClienttxtToolStripMenuItem_Click);
+			// 
+			// NotificationIcon
+			// 
+			this.NotificationIcon.Text = "PoE Whisper Notifier";
+			this.NotificationIcon.Visible = true;
+			// 
+			// testNotificationToolStripMenuItem
+			// 
+			this.testNotificationToolStripMenuItem.Name = "testNotificationToolStripMenuItem";
+			this.testNotificationToolStripMenuItem.Size = new System.Drawing.Size(346, 46);
+			this.testNotificationToolStripMenuItem.Text = "Test &Notification";
+			this.testNotificationToolStripMenuItem.Click += new System.EventHandler(this.testNotificationToolStripMenuItem_Click);
 			// 
 			// Main
 			// 
@@ -327,6 +336,7 @@
         private System.Windows.Forms.ToolStripMenuItem tsmLogGuildMessages;
         private System.Windows.Forms.ToolStripMenuItem toolsToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem tsmTrimLogFile;
+		private System.Windows.Forms.ToolStripMenuItem testNotificationToolStripMenuItem;
 	}
 }
 
