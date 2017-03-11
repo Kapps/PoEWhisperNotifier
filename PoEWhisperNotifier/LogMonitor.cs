@@ -225,7 +225,7 @@ namespace PoEWhisperNotifier {
 		}
 
 		// Group 1 = Chat Type, Group 2 = Username, Group 3 = Contents
-		private static readonly Regex ChatRegex = new Regex(@"^.+\ .+\ .+\ .+\ \[.+\]\ (%|@From|@От кого|@De|&)(.+):\ (.+)$");
+		private static readonly Regex ChatRegex = new Regex(@"^.+?\ .+?\ .+?\ .+?\ \[.+?\]\ (%|@From|@От кого|@De|&)(.+?):\ (.+)$");
 		private static readonly Regex DisconnectRegex = new Regex(@"^.+\ .+\ .+\ .+\ \[.+\]\ Abnormal disconnect:(.+)");
 		private static readonly Dictionary<string, LogMessageType> SymbolToMessageType = new Dictionary<string, LogMessageType>() { { "%", LogMessageType.Party }, { "@", LogMessageType.Whisper }, { "&", LogMessageType.Guild } };
 

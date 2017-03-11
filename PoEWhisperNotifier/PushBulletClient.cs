@@ -24,22 +24,31 @@ namespace PoEWhisperNotifier {
 		/// Sends a push notification to all devices given the current API Key.
 		/// </summary>
 		public void SendPush(string Title, string Body) {
-			var httpWebRequest = (HttpWebRequest)WebRequest.Create("https://api.pushbullet.com/v2/pushes");
-			httpWebRequest.ReadWriteTimeout = 100000;
-			httpWebRequest.ContentType = "application/x-www-form-urlencoded";
-			httpWebRequest.Accept = "application/json";
-			httpWebRequest.Method = "POST";
-			string auth = Convert.ToBase64String(Encoding.UTF8.GetBytes(this.Details.ApiKey + ":"));
-			httpWebRequest.Headers.Add("Authorization", "Basic " + auth);
-			using(var streamWriter = new StreamWriter(httpWebRequest.GetRequestStream())) {
-				string parameters = string.Format("type={0}&title={1}&body={2}", "note", Uri.EscapeDataString(Title), Uri.EscapeDataString(Body));
-				streamWriter.Write(parameters);
-				streamWriter.Flush();
-				streamWriter.Close();
+			var WebReq = (HttpWebRequest)WebRequest.Create("https://api.pushbullet.com/v2/pushes");
+			WebReq.ReadWriteTimeout = 100000;
+			WebReq.ContentType = "application/x-www-form-urlencoded";
+			WebReq.Accept = "application/json";
+			WebReq.Method = "POST";
+			string AuthString = Convert.ToBase64String(Encoding.UTF8.GetBytes(this.Details.ApiKey + ":"));
+			WebReq.Headers.Add("Authorization", "Basic " + AuthString);
+			using(var Writer = new StreamWriter(WebReq.GetRequestStream())) {
+				string Params = string.Format("type={0}&title={1}&body={2}", "note", Uri.EscapeDataString(Title), Uri.EscapeDataString(Body));
+				Writer.Write(Params);
+				Writer.Flush();
+				Writer.Close();
 			}
-			HttpWebResponse resp = (HttpWebResponse)httpWebRequest.GetResponse();
-			string respStr = new StreamReader(resp.GetResponseStream()).ReadToEnd();
-			//System.Windows.Forms.MessageBox.Show("Response : " + respStr); // if you want see the output
+			try {
+				HttpWebResponse Resp = (HttpWebResponse)WebReq.GetResponse();
+			} catch (WebException ex) {
+				if(ex.Status == WebExceptionStatus.ProtocolError) {
+					using (var Reader = new StreamReader(ex.Response.GetResponseStream())) {
+						string Response = Reader.ReadToEnd();
+						throw new ApplicationException("Failed to send Pushbullet notification: " + Response);
+					}
+				} else {
+					throw;
+				}
+			}
 		}
 
 		private PushBulletDetails Details;
