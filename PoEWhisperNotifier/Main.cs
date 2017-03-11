@@ -172,18 +172,16 @@ namespace PoEWhisperNotifier {
 				}
 				// Otherwise, they are idle, so process the message anyways.
 			}
-			SendNotification(obj, false);
+			Invoke(new Action(() => SendNotification(obj, false)));
 		}
 
 		private void SendNotification(MessageData Message, bool AssumeInactive) {
 			string StampedMessage = "[" + Message.Date.ToShortTimeString() + "]" + (Message.Sender == null ? "" : (" " + LogMonitor.ChatSymbolForMessageType(Message.MessageType) + Message.Sender)) + ": " + Message.Message;
 			string Title = "Path of Exile " + Message.MessageType;
-			Invoke(new Action(() => AppendMessage(StampedMessage)));
+			AppendMessage(StampedMessage);
 			if (Settings.Default.TrayNotifications) {
-				Invoke(new Action(() => {
-					NotificationIcon.Visible = true;
-					NotificationIcon.ShowBalloonTip(5000, Title, (Message.Sender == null ? "" : (Message.Sender + ": ")) + Message.Message, ToolTipIcon.Info);
-				}));
+				NotificationIcon.Visible = true;
+				NotificationIcon.ShowBalloonTip(5000, Title, (Message.Sender == null ? "" : (Message.Sender + ": ")) + Message.Message, ToolTipIcon.Info);
 			}
 			if (Settings.Default.EnableSound) {
 				try {

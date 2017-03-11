@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
 namespace PoEWhisperNotifier {
@@ -39,7 +40,7 @@ namespace PoEWhisperNotifier {
         /// </summary>
         [Description("Indicates if all of the required fields contain potentially valid data.")]
 		public bool IsValid {
-			get { return !String.IsNullOrWhiteSpace(ApiKey); }
+			get { return !String.IsNullOrWhiteSpace(ApiKey) && IsValidOrMissingRegex(this.NotifyOnlyIfMatches); }
 		}
 
 		/// <summary>
@@ -79,6 +80,17 @@ namespace PoEWhisperNotifier {
 				var Base64 = Convert.ToBase64String(Bytes);
 				Settings.Default.SerializedPushBulletData = Base64;
 				Settings.Default.Save();
+			}
+		}
+
+		private static bool IsValidOrMissingRegex(string RegexText) {
+			if (String.IsNullOrWhiteSpace(RegexText))
+				return true;
+			try {
+				Regex.IsMatch("", RegexText);
+				return true;
+			} catch {
+				return false;
 			}
 		}
 	}
