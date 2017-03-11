@@ -225,7 +225,7 @@ namespace PoEWhisperNotifier {
 						var Client = new PushBulletClient(PbSettings);
 						Client.SendPush(Title, StampedMessage);
 					});
-					if (!PbSettings.NotifyOnlyIfIdle)
+					if (AssumeInactive || !PbSettings.NotifyOnlyIfIdle)
 						PbAct();
 					else
 						IdleManager.AddIdleAction(PbAct);
