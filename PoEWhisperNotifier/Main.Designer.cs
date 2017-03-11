@@ -54,6 +54,7 @@
 			this.tsmTrimLogFile = new System.Windows.Forms.ToolStripMenuItem();
 			this.testNotificationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.NotificationIcon = new System.Windows.Forms.NotifyIcon(this.components);
+			this.tsmStartMinimized = new System.Windows.Forms.ToolStripMenuItem();
 			this.tableLayoutPanel1.SuspendLayout();
 			this.menuStrip1.SuspendLayout();
 			this.SuspendLayout();
@@ -166,7 +167,7 @@
 			// exitToolStripMenuItem
 			// 
 			this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-			this.exitToolStripMenuItem.Size = new System.Drawing.Size(108, 26);
+			this.exitToolStripMenuItem.Size = new System.Drawing.Size(181, 26);
 			this.exitToolStripMenuItem.Text = "E&xit";
 			this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
 			// 
@@ -181,6 +182,7 @@
             this.tsmEnableSMTPNotifications,
             this.tsmEnablePushBullet,
             this.tsmMinimizeToTray,
+            this.tsmStartMinimized,
             this.configureSMTPToolStripMenuItem,
             this.configurePushBulletToolStripMenuItem});
 			this.editToolStripMenuItem.Name = "editToolStripMenuItem";
@@ -285,6 +287,13 @@
 			this.NotificationIcon.Text = "PoE Whisper Notifier";
 			this.NotificationIcon.Visible = true;
 			// 
+			// tsmStartMinimized
+			// 
+			this.tsmStartMinimized.Name = "tsmStartMinimized";
+			this.tsmStartMinimized.Size = new System.Drawing.Size(290, 26);
+			this.tsmStartMinimized.Text = "Start Minimiz&ed";
+			this.tsmStartMinimized.Click += new System.EventHandler(this.tsmStartMinimized_Click);
+			// 
 			// Main
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(120F, 120F);
@@ -298,7 +307,6 @@
 			this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
 			this.Name = "Main";
 			this.Text = "PoE Whisper Notifier";
-			this.Load += new System.EventHandler(this.Form1_Load);
 			this.tableLayoutPanel1.ResumeLayout(false);
 			this.tableLayoutPanel1.PerformLayout();
 			this.menuStrip1.ResumeLayout(false);
@@ -334,6 +342,7 @@
         private System.Windows.Forms.ToolStripMenuItem toolsToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem tsmTrimLogFile;
 		private System.Windows.Forms.ToolStripMenuItem testNotificationToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem tsmStartMinimized;
 	}
 }
 

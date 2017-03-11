@@ -32,9 +32,8 @@ namespace PoEWhisperNotifier {
 		public Main() {
 			InitializeComponent();
 			NotificationIcon.Icon = this.Icon;
-		}
 
-		private void Form1_Load(object sender, EventArgs e) {
+			// Have to initialize in the ctor in order to handle Load with Minimize to Tray.
 			NotificationIcon.Visible = Settings.Default.TrayNotifications || Settings.Default.MinimizeToTray;
 			NotificationIcon.BalloonTipClicked += NotificationIconClick;
 			NotificationIcon.DoubleClick += NotificationIconClick;
@@ -48,6 +47,7 @@ namespace PoEWhisperNotifier {
 			tsmEnablePushBullet.Checked = Settings.Default.EnablePushbullet;
 			tsmEnableSound.Checked = Settings.Default.EnableSound;
 			tsmMinimizeToTray.Checked = Settings.Default.MinimizeToTray;
+			tsmStartMinimized.Checked = Settings.Default.StartMinimized;
 			tsmLogPartyMessages.Checked = Settings.Default.LogPartyMessages;
 			tsmLogGuildMessages.Checked = Settings.Default.LogGuildMessages;
 			RestoreSize();
@@ -60,8 +60,23 @@ namespace PoEWhisperNotifier {
 					AppendMessage("Unable to figure out client.txt location. You will have to manually set the path.");
 			}
 			StartMonitoring(true);
-
 			this.ResizeEnd += OnResizeEnd;
+		}
+
+		protected override void SetVisibleCore(bool value) {
+			// To minimize on start, we prevent it being shown.
+			// But we only want to do that once.
+			if (FirstLoad && !cmdStart.Enabled && Settings.Default.StartMinimized) {
+				FirstLoad = false;
+				if (Settings.Default.MinimizeToTray) {
+					NotificationIcon.Visible = true;
+					NotificationIcon.ShowBalloonTip(2000, "Whisper Notifier Started Minimized", "PoEWhisperNotifier started minimized. Double click the icon to show the window.", ToolTipIcon.Info);
+					return;
+				} else {
+					this.WindowState = FormWindowState.Minimized;
+				}
+			}
+			base.SetVisibleCore(value);
 		}
 
 		private void RestoreSize() {
@@ -319,6 +334,12 @@ namespace PoEWhisperNotifier {
 			Settings.Default.Save();
 		}
 
+		private void tsmStartMinimized_Click(object sender, EventArgs e) {
+			tsmStartMinimized.Checked = !tsmStartMinimized.Checked;
+			Settings.Default.StartMinimized = tsmStartMinimized.Checked;
+			Settings.Default.Save();
+		}
+
 		private void tsmMinimizeToTray_Click(object sender, EventArgs e) {
 			tsmMinimizeToTray.Checked = !tsmMinimizeToTray.Checked;
 			Settings.Default.MinimizeToTray = tsmMinimizeToTray.Checked;
@@ -437,5 +458,6 @@ namespace PoEWhisperNotifier {
 
 		private SoundPlayer SoundPlayer = new SoundPlayer("Content\\notify.wav");
 		private LogMonitor Monitor;
+		private bool FirstLoad = true;
 	}
 }
