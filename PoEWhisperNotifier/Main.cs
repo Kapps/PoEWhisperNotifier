@@ -24,7 +24,7 @@ namespace PoEWhisperNotifier {
 		[DllImport("user32.dll")]
 		public static extern IntPtr GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
 
- 
+
 		private bool IsMonitoring {
 			get { return this.Monitor != null && this.Monitor.IsMonitoring; }
 		}
@@ -47,27 +47,25 @@ namespace PoEWhisperNotifier {
 			tsmEnableSMTPNotifications.Checked = Settings.Default.EnableSmtpNotifications;
 			tsmEnablePushBullet.Checked = Settings.Default.EnablePushbullet;
 			tsmEnableSound.Checked = Settings.Default.EnableSound;
-			tsmAutoStart.Checked = Settings.Default.AutoStartWhenOpened;
 			tsmMinimizeToTray.Checked = Settings.Default.MinimizeToTray;
 			tsmLogPartyMessages.Checked = Settings.Default.LogPartyMessages;
-            tsmLogGuildMessages.Checked = Settings.Default.LogGuildMessages;
-            RestoreSize();
+			tsmLogGuildMessages.Checked = Settings.Default.LogGuildMessages;
+			RestoreSize();
 			this.Resize += Main_Resize;
 			if (!LogMonitor.IsValidLogPath(txtLogPath.Text)) {
 				string DefaultLogPath;
-				if(LogMonitor.TryGetDefaultLogPath(out DefaultLogPath))
+				if (LogMonitor.TryGetDefaultLogPath(out DefaultLogPath))
 					txtLogPath.Text = DefaultLogPath;
 				else
 					AppendMessage("Unable to figure out client.txt location. You will have to manually set the path.");
 			}
-			if(Settings.Default.AutoStartWhenOpened)
-				StartMonitoring(true);
+			StartMonitoring(true);
 
 			this.ResizeEnd += OnResizeEnd;
 		}
 
 		private void RestoreSize() {
-			if(Settings.Default.PreviousSize.Width > 50 && Settings.Default.PreviousSize.Height > 50) {
+			if (Settings.Default.PreviousSize.Width > 50 && Settings.Default.PreviousSize.Height > 50) {
 				this.StartPosition = FormStartPosition.Manual;
 				this.Location = Settings.Default.PreviousLocation;
 				this.Size = Settings.Default.PreviousSize;
@@ -88,8 +86,8 @@ namespace PoEWhisperNotifier {
 		}
 
 		void Main_Resize(object sender, EventArgs e) {
-			if(Settings.Default.MinimizeToTray) {
-				if(this.WindowState == FormWindowState.Minimized) {
+			if (Settings.Default.MinimizeToTray) {
+				if (this.WindowState == FormWindowState.Minimized) {
 					this.Visible = false;
 					NotificationIcon.Visible = true;
 				} else {
@@ -99,19 +97,19 @@ namespace PoEWhisperNotifier {
 		}
 
 		void txtLogPath_Click(object sender, EventArgs e) {
-			using(var OFD = new OpenFileDialog()) {
+			using (var OFD = new OpenFileDialog()) {
 				string CurrPath = txtLogPath.Text ?? Settings.Default.LogPath;
 				OFD.Filter = "Log File|Client.txt|All Files (*.*)|*.*";
-				if(LogMonitor.IsValidLogPath(CurrPath))
+				if (LogMonitor.IsValidLogPath(CurrPath))
 					OFD.InitialDirectory = CurrPath;
-				if(OFD.ShowDialog() == System.Windows.Forms.DialogResult.OK) {
+				if (OFD.ShowDialog() == System.Windows.Forms.DialogResult.OK) {
 					txtLogPath.Text = OFD.FileName;
 				}
 			}
 		}
 
 		void txtLogPath_TextChanged(object sender, EventArgs e) {
-			if(LogMonitor.IsValidLogPath(txtLogPath.Text)) {
+			if (LogMonitor.IsValidLogPath(txtLogPath.Text)) {
 				txtLogPath.BackColor = Color.FromKnownColor(KnownColor.Window);
 				Settings.Default.LogPath = txtLogPath.Text;
 				Settings.Default.Save();
@@ -125,7 +123,7 @@ namespace PoEWhisperNotifier {
 		}
 
 		private void StartMonitoring(bool AutoStarted) {
-			if(!LogMonitor.IsValidLogPath(txtLogPath.Text)) {
+			if (!LogMonitor.IsValidLogPath(txtLogPath.Text)) {
 				string ErrMsg = "Failed to start " + (AutoStarted ? "automatically " : "") + "as the log path is invalid.";
 				if (AutoStarted)
 					AppendMessage(ErrMsg);
@@ -133,7 +131,7 @@ namespace PoEWhisperNotifier {
 					MessageBox.Show(ErrMsg);
 				return;
 			}
-			if(new FileInfo(txtLogPath.Text).IsReadOnly) {
+			if (new FileInfo(txtLogPath.Text).IsReadOnly) {
 				AppendMessage("Warning: Your client.txt file appears to be readonly. This will likely prevent the program from working.");
 			}
 			cmdStop.Enabled = true;
@@ -162,10 +160,10 @@ namespace PoEWhisperNotifier {
 		void ProcessMessage(MessageData obj) {
 			if (obj.MessageType == LogMessageType.Party && !Settings.Default.LogPartyMessages)
 				return;
-            if (obj.MessageType == LogMessageType.Guild && !Settings.Default.LogGuildMessages)
-                return;
-            if (Settings.Default.NotifyMinimizedOnly && IsPoeActive()) {
-				if(!IdleManager.IsUserIdle) {
+			if (obj.MessageType == LogMessageType.Guild && !Settings.Default.LogGuildMessages)
+				return;
+			if (Settings.Default.NotifyMinimizedOnly && IsPoeActive()) {
+				if (!IdleManager.IsUserIdle) {
 					// If the user isn't idle, replay the message if they do go idle.
 					IdleManager.AddIdleAction(() => ProcessMessage(obj));
 					return;
@@ -199,25 +197,25 @@ namespace PoEWhisperNotifier {
 				else
 					IdleManager.AddIdleAction(SmtpAct);
 			}
-			if(Settings.Default.EnablePushbullet) {
-                var PbSettings = PushBulletDetails.LoadFromSettings();
-                Regex Pattern = null;
-                Match Matches = null;
-                if (!String.IsNullOrWhiteSpace(PbSettings.NotifyOnlyIfMatches)) {
-                    Pattern = new Regex(PbSettings.NotifyOnlyIfMatches);
-                    Matches = Pattern.Match(Message.Message);
-                }
-                if (Pattern == null || ((Pattern != null) && Matches.Success)) {
-                    var PbAct = CheckedAction("PushBullet", () => {
-                        var Client = new PushBulletClient(PbSettings);
-                        Client.SendPush(Title, StampedMessage);
-                    });
-                    if (!PbSettings.NotifyOnlyIfIdle)
-                        PbAct();
-                    else
-                        IdleManager.AddIdleAction(PbAct);
-                }
-            }
+			if (Settings.Default.EnablePushbullet) {
+				var PbSettings = PushBulletDetails.LoadFromSettings();
+				Regex Pattern = null;
+				Match Matches = null;
+				if (!String.IsNullOrWhiteSpace(PbSettings.NotifyOnlyIfMatches)) {
+					Pattern = new Regex(PbSettings.NotifyOnlyIfMatches);
+					Matches = Pattern.Match(Message.Message);
+				}
+				if (Pattern == null || ((Pattern != null) && Matches.Success)) {
+					var PbAct = CheckedAction("PushBullet", () => {
+						var Client = new PushBulletClient(PbSettings);
+						Client.SendPush(Title, StampedMessage);
+					});
+					if (!PbSettings.NotifyOnlyIfIdle)
+						PbAct();
+					else
+						IdleManager.AddIdleAction(PbAct);
+				}
+			}
 			if (Settings.Default.FlashTaskbar && (!IsPoeActive() || AssumeInactive)) {
 				var PoeProcess = GetPoeProcess();
 				if (PoeProcess != null) {
@@ -245,18 +243,18 @@ namespace PoEWhisperNotifier {
 		}
 
 		private void SendSmtpNotification(SmtpDetails SmtpSettings, string StampedMessage) {
-			using(var Client = new SmtpClient()) {
+			using (var Client = new SmtpClient()) {
 				Client.UseDefaultCredentials = false;
 				Client.Credentials = new NetworkCredential(SmtpSettings.Username, SmtpSettings.Password);
 				Client.Host = SmtpSettings.SmtpServer;
 				Client.Port = SmtpSettings.SmtpPort;
 				Client.EnableSsl = true;
 				Client.DeliveryMethod = SmtpDeliveryMethod.Network;
-				using(var Message = new MailMessage(SmtpSettings.FromEmail, SmtpSettings.Target)) {
+				using (var Message = new MailMessage(SmtpSettings.FromEmail, SmtpSettings.Target)) {
 					Message.Subject = "Path of Exile Whisper Notification";
 					// Limit messages to around 120 characters, some phone providers don't like more.
 					Message.Body = StampedMessage;
-					if(Message.Body.Length + Message.Subject.Length > 120)
+					if (Message.Body.Length + Message.Subject.Length > 120)
 						Message.Body = Message.Body.Substring(0, 120 - Message.Subject.Length) + "..";
 					Client.Send(Message);
 				}
@@ -282,7 +280,7 @@ namespace PoEWhisperNotifier {
 			uint pid;
 			GetWindowThreadProcessId(hWndFg, out pid);
 			var FgProc = Process.GetProcessById((int)pid);
-			if(FgProc == null)
+			if (FgProc == null)
 				return false;
 			return FgProc.ProcessName.Contains("PathOfExile");
 		}
@@ -314,16 +312,10 @@ namespace PoEWhisperNotifier {
 			Settings.Default.LogPartyMessages = tsmLogPartyMessages.Checked;
 			Settings.Default.Save();
 		}
-        private void tsmLogGuildMessages_Click(object sender, EventArgs e)
-        {
-            tsmLogGuildMessages.Checked = !tsmLogGuildMessages.Checked;
-            Settings.Default.LogGuildMessages = tsmLogGuildMessages.Checked;
-            Settings.Default.Save();
-        }
 
-        private void tsmAutoStart_Click(object sender, EventArgs e) {
-			tsmAutoStart.Checked = !tsmAutoStart.Checked;
-			Settings.Default.AutoStartWhenOpened = tsmAutoStart.Checked;
+		private void tsmLogGuildMessages_Click(object sender, EventArgs e) {
+			tsmLogGuildMessages.Checked = !tsmLogGuildMessages.Checked;
+			Settings.Default.LogGuildMessages = tsmLogGuildMessages.Checked;
 			Settings.Default.Save();
 		}
 
@@ -340,9 +332,9 @@ namespace PoEWhisperNotifier {
 			tsmEnablePushBullet.Checked = !tsmEnablePushBullet.Checked;
 			Settings.Default.EnablePushbullet = tsmEnablePushBullet.Checked;
 			Settings.Default.Save();
-			if(Settings.Default.EnablePushbullet) {
+			if (Settings.Default.EnablePushbullet) {
 				var CurrSettings = PushBulletDetails.LoadFromSettings();
-				if(!CurrSettings.IsValid)
+				if (!CurrSettings.IsValid)
 					ShowPushBulletDialog();
 			}
 		}
@@ -355,9 +347,9 @@ namespace PoEWhisperNotifier {
 			tsmEnableSMTPNotifications.Checked = !tsmEnableSMTPNotifications.Checked;
 			Settings.Default.EnableSmtpNotifications = tsmEnableSMTPNotifications.Checked;
 			Settings.Default.Save();
-			if(Settings.Default.EnableSmtpNotifications) {
+			if (Settings.Default.EnableSmtpNotifications) {
 				var CurrSettings = SmtpDetails.LoadFromSettings();
-				if(!CurrSettings.IsValid)
+				if (!CurrSettings.IsValid)
 					ShowSmtpDialog();
 			}
 		}
@@ -374,14 +366,14 @@ namespace PoEWhisperNotifier {
 			}
 			var LogLength = new FileInfo(LogPath).Length;
 			long DesiredLength = 10 * 1024 * 1024;
-			if(LogLength <= DesiredLength) {
+			if (LogLength <= DesiredLength) {
 				MessageBox.Show("Your client.txt is already below 10MB. No action has been taken.");
 				return;
 			}
 			if (MessageBox.Show("This will remove old data from your client.txt (currently " + LogLength / (1024 * 1024) + "MB) to reduce it to 10MB. Are you sure you wish to do this? This process is NOT reversible.", "Confirm Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes) {
 				return;
 			}
-			if(GetPoeProcess() != null) {
+			if (GetPoeProcess() != null) {
 				MessageBox.Show("You must close Path of Exile for this operation to work.", "Failed to Trim Log", MessageBoxButtons.OK, MessageBoxIcon.Error);
 				return;
 			}
@@ -391,7 +383,7 @@ namespace PoEWhisperNotifier {
 			try {
 				string CopyLocation = LogPath + ".new";
 				string BackupLocation = LogPath + ".old";
-				if(File.Exists(BackupLocation)) {
+				if (File.Exists(BackupLocation)) {
 					MessageBox.Show("A log file already appears to exist from before. Please delete it if it is not valid.");
 					Process.Start(new ProcessStartInfo() {
 						UseShellExecute = true,
@@ -400,7 +392,7 @@ namespace PoEWhisperNotifier {
 					});
 					return;
 				}
-				using(var LogFile = File.Open(LogPath, FileMode.Open, FileAccess.ReadWrite, FileShare.Delete)) {
+				using (var LogFile = File.Open(LogPath, FileMode.Open, FileAccess.ReadWrite, FileShare.Delete)) {
 					LogFile.Seek(-DesiredLength, SeekOrigin.End);
 					if (File.Exists(CopyLocation))
 						File.Delete(CopyLocation);
@@ -420,9 +412,9 @@ namespace PoEWhisperNotifier {
 		}
 
 		private void ShowPushBulletDialog() {
-			using(var PbDialog = new ConfigurePushBulletDialog()) {
+			using (var PbDialog = new ConfigurePushBulletDialog()) {
 				PbDialog.ShowDialog();
-				if(!PbDialog.Details.IsValid) {
+				if (!PbDialog.Details.IsValid) {
 					tsmEnablePushBullet.Checked = false;
 					Settings.Default.EnablePushbullet = false;
 					Settings.Default.Save();
@@ -432,9 +424,9 @@ namespace PoEWhisperNotifier {
 		}
 
 		private void ShowSmtpDialog() {
-			using(var SmtpDialog = new ConfigureSmtpDialog()) {
+			using (var SmtpDialog = new ConfigureSmtpDialog()) {
 				SmtpDialog.ShowDialog();
-				if(!SmtpDialog.Details.IsValid && Settings.Default.EnableSmtpNotifications) {
+				if (!SmtpDialog.Details.IsValid && Settings.Default.EnableSmtpNotifications) {
 					tsmEnableSMTPNotifications.Checked = false;
 					Settings.Default.EnableSmtpNotifications = false;
 					Settings.Default.Save();
@@ -444,6 +436,6 @@ namespace PoEWhisperNotifier {
 		}
 
 		private SoundPlayer SoundPlayer = new SoundPlayer("Content\\notify.wav");
-		private LogMonitor Monitor;		
+		private LogMonitor Monitor;
 	}
 }
