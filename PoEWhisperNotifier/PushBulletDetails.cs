@@ -27,10 +27,17 @@ namespace PoEWhisperNotifier {
 		[Description("If true, sends a notification only if you have not done any input for 2 minutes.")]
 		public bool NotifyOnlyIfIdle { get; set; }
 
-		/// <summary>
-		/// Gets whether all fields have potentially valid values.
-		/// </summary>
-		[Description("Indicates if all of the required fields contain potentially valid data.")]
+        /// <summary>
+        /// Indicates whether the user should only be notified if not at their computer.
+        /// </summary>
+        [DisplayName("Notify Only If Matches")]
+        [Description("If not empty, will notify only if message matches the pattern. The pattern must conform to the .NET Regex rules.")]
+        public string NotifyOnlyIfMatches { get; set; }
+
+        /// <summary>
+        /// Gets whether all fields have potentially valid values.
+        /// </summary>
+        [Description("Indicates if all of the required fields contain potentially valid data.")]
 		public bool IsValid {
 			get { return !String.IsNullOrWhiteSpace(ApiKey); }
 		}

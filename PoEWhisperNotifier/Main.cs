@@ -12,6 +12,7 @@ using System.Net;
 using System.Net.Mail;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -200,17 +201,25 @@ namespace PoEWhisperNotifier {
 				else
 					IdleManager.AddIdleAction(SmtpAct);
 			}
-			if (Settings.Default.EnablePushbullet) {
-				var PbSettings = PushBulletDetails.LoadFromSettings();
-				var PbAct = CheckedAction("PushBullet", () => {
-					var Client = new PushBulletClient(PbSettings);
-					Client.SendPush(Title, StampedMessage);
-				});
-				if (!PbSettings.NotifyOnlyIfIdle || AssumeInactive)
-					PbAct();
-				else
-					IdleManager.AddIdleAction(PbAct);
-			}
+			if(Settings.Default.EnablePushbullet) {
+                var PbSettings = PushBulletDetails.LoadFromSettings();
+                Regex Pattern = null;
+                Match Matches = null;
+                if (!String.IsNullOrWhiteSpace(PbSettings.NotifyOnlyIfMatches)) {
+                    Pattern = new Regex(PbSettings.NotifyOnlyIfMatches);
+                    Matches = Pattern.Match(Message.Message);
+                }
+                if (Pattern == null || ((Pattern != null) && Matches.Success)) {
+                    var PbAct = CheckedAction("PushBullet", () => {
+                        var Client = new PushBulletClient(PbSettings);
+                        Client.SendPush(Title, StampedMessage);
+                    });
+                    if (!PbSettings.NotifyOnlyIfIdle)
+                        PbAct();
+                    else
+                        IdleManager.AddIdleAction(PbAct);
+                }
+            }
 			if (Settings.Default.FlashTaskbar && (!IsPoeActive() || AssumeInactive)) {
 				var PoeProcess = GetPoeProcess();
 				if (PoeProcess != null) {
