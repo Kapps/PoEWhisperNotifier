@@ -63,22 +63,6 @@ namespace PoEWhisperNotifier {
 			this.ResizeEnd += OnResizeEnd;
 		}
 
-		protected override void SetVisibleCore(bool value) {
-			// To minimize on start, we prevent it being shown.
-			// But we only want to do that once.
-			if (FirstLoad && !cmdStart.Enabled && Settings.Default.StartMinimized) {
-				FirstLoad = false;
-				if (Settings.Default.MinimizeToTray) {
-					NotificationIcon.Visible = true;
-					NotificationIcon.ShowBalloonTip(2000, "Whisper Notifier Started Minimized", "PoEWhisperNotifier started minimized. Double click the icon to show the window.", ToolTipIcon.Info);
-					return;
-				} else {
-					this.WindowState = FormWindowState.Minimized;
-				}
-			}
-			base.SetVisibleCore(value);
-		}
-
 		private void RestoreSize() {
 			if (Settings.Default.PreviousSize.Width > 50 && Settings.Default.PreviousSize.Height > 50) {
 				this.StartPosition = FormStartPosition.Manual;
@@ -284,6 +268,23 @@ namespace PoEWhisperNotifier {
 			this.Close();
 		}
 
+		private void Main_Load(object sender, EventArgs e) {
+			if (Settings.Default.MinimizeToTray) {
+				ThreadPool.QueueUserWorkItem((_) => {
+					Thread.Sleep(100); // HACK: Work around issue where minimizing to tray keeps icon in taskbar.
+					Invoke(new Action(() => {
+						this.WindowState = FormWindowState.Minimized;
+						NotificationIcon.Visible = true;
+						NotificationIcon.ShowBalloonTip(2000, "Whisper Notifier Started Minimized", "PoEWhisperNotifier started minimized. Double click the icon to show the window.", ToolTipIcon.Info);
+					}));
+				});
+				this.Visible = false;
+			} else {
+				this.WindowState = FormWindowState.Minimized;
+			}
+			throw new InvalidOperationException("Test exception");
+		}
+
 		private void notifyOnlyWhenMinimizedToolStripMenuItem_Click(object sender, EventArgs e) {
 			tsmNotifyMinimizedOnly.Checked = !tsmNotifyMinimizedOnly.Checked;
 			Settings.Default.NotifyMinimizedOnly = tsmNotifyMinimizedOnly.Checked;
@@ -458,6 +459,5 @@ namespace PoEWhisperNotifier {
 
 		private SoundPlayer SoundPlayer = new SoundPlayer("Content\\notify.wav");
 		private LogMonitor Monitor;
-		private bool FirstLoad = true;
 	}
 }
