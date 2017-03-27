@@ -319,8 +319,9 @@
             this.rtbHistory.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.rtbHistory.BackColor = System.Drawing.Color.White;
+            this.rtbHistory.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(39)))), ((int)(((byte)(40)))), ((int)(((byte)(34)))));
             this.rtbHistory.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.rtbHistory.ForeColor = System.Drawing.Color.White;
             this.rtbHistory.HideSelection = false;
             this.rtbHistory.Location = new System.Drawing.Point(9, 115);
             this.rtbHistory.Margin = new System.Windows.Forms.Padding(2);

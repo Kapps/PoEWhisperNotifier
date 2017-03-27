@@ -242,10 +242,35 @@ namespace PoEWhisperNotifier
 			Invoke(new Action(() => SendNotification(obj, false)));
 		}
 
-		private void SendNotification(MessageData Message, bool AssumeInactive) {
+        private void SendNotification(MessageData Message, bool AssumeInactive) {
 			string StampedMessage = "[" + Message.Date.ToShortTimeString() + "]" + (Message.Sender == null ? "" : (" " + LogMonitor.ChatSymbolForMessageType(Message.MessageType) + Message.Sender)) + ": " + Message.Message;
-			string Title = "Path of Exile " + Message.MessageType;
-			AppendMessage(StampedMessage);
+            string ColoredMessage = "[" + Message.Date.ToShortTimeString() + "]" + (Message.Sender == null ? "" : (" " + LogMonitor.ChatSymbolForMessageType(Message.MessageType) + Message.Sender)) + ": ";
+
+            string Title = "Path of Exile " + Message.MessageType;
+            switch (Message.MessageType)
+            {
+                case LogMessageType.Trade:
+                    AppendText1(rtbHistory, Color.FromArgb(0xFE8000), ColoredMessage);
+                    AppendText2(rtbHistory, Color.FromArgb(0xEFEFEF), Message.Message);
+                    break;
+                case LogMessageType.Global:
+                    AppendText1(rtbHistory, Color.FromArgb(0xE00000), ColoredMessage);
+                    AppendText2(rtbHistory, Color.FromArgb(0xEFEFEF), Message.Message);
+                    break;
+                case LogMessageType.Guild:
+                    AppendText1(rtbHistory, Color.FromArgb(0x909090), ColoredMessage);
+                    AppendText2(rtbHistory, Color.FromArgb(0xEFEFEF), Message.Message);
+                    break;
+                case LogMessageType.Whisper:
+                    AppendText1(rtbHistory, Color.FromArgb(0x9C62D6), ColoredMessage);
+                    AppendText2(rtbHistory, Color.FromArgb(0xEFEFEF), Message.Message);
+                    break;
+                case LogMessageType.Party:
+                    AppendText1(rtbHistory, Color.FromArgb(0x0D8ECD), ColoredMessage);
+                    AppendText2(rtbHistory, Color.FromArgb(0xEFEFEF), Message.Message);
+                    break;
+            }
+
 			if (Settings.Default.TrayNotifications) {
 				NotificationIcon.Visible = true;
 				NotificationIcon.ShowBalloonTip(5000, Title, (Message.Sender == null ? "" : (Message.Sender + ": ")) + Message.Message, ToolTipIcon.Info);
@@ -305,9 +330,39 @@ namespace PoEWhisperNotifier
 					Invoke(new Action(() => AppendMessage("<Failed to send " + Task + " notification: " + ex.Message + ">\r\n")));
 				}
 			};
-		}
+        }
 
-		private void AppendMessage(string Message) {
+        private void AppendText1(RichTextBox box, Color color, string text)
+        {
+            int start = box.TextLength;
+            box.AppendText(text);
+            int end = box.TextLength;
+
+            // Textbox may transform chars, so (end-start) != text.Length
+            box.Select(start, end - start);
+            {
+                box.SelectionColor = color;
+                // could set box.SelectionBackColor, box.SelectionFont too.
+            }
+            box.SelectionLength = 0; // clear
+        }
+
+        private void AppendText2(RichTextBox box, Color color, string text)
+        {
+            int start = box.TextLength;
+            box.AppendText(text + "\r\n");
+            int end = box.TextLength;
+
+            // Textbox may transform chars, so (end-start) != text.Length
+            box.Select(start, end - start);
+            {
+                box.SelectionColor = color;
+                // could set box.SelectionBackColor, box.SelectionFont too.
+            }
+            box.SelectionLength = 0; // clear
+        }
+
+        private void AppendMessage(string Message) {
 			rtbHistory.AppendText(Message + "\r\n");
 		}
 
