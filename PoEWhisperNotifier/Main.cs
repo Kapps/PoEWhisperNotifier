@@ -282,7 +282,6 @@ namespace PoEWhisperNotifier {
 			} else {
 				this.WindowState = FormWindowState.Minimized;
 			}
-			throw new InvalidOperationException("Test exception");
 		}
 
 		private void notifyOnlyWhenMinimizedToolStripMenuItem_Click(object sender, EventArgs e) {
