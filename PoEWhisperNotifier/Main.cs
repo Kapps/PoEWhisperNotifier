@@ -1,8 +1,5 @@
 ﻿using PoEWhisperNotifier.Properties;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
@@ -11,14 +8,14 @@ using System.Media;
 using System.Net;
 using System.Net.Mail;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Configuration;
 
-namespace PoEWhisperNotifier {
-	public partial class Main : Form {
+namespace PoEWhisperNotifier
+{
+    public partial class Main : Form {
 		[DllImport("user32.dll")]
 		private static extern IntPtr GetForegroundWindow();
 		[DllImport("user32.dll")]
@@ -49,8 +46,12 @@ namespace PoEWhisperNotifier {
 			tsmMinimizeToTray.Checked = Settings.Default.MinimizeToTray;
 			tsmStartMinimized.Checked = Settings.Default.StartMinimized;
 			tsmLogPartyMessages.Checked = Settings.Default.LogPartyMessages;
-			tsmLogGuildMessages.Checked = Settings.Default.LogGuildMessages;
-			RestoreSize();
+            tsmLogGuildMessages.Checked = Settings.Default.LogGuildMessages;
+            tsmLogTradeMessages.Checked = Settings.Default.LogTradeMessages;
+            tsmLogGlobalMessages.Checked = Settings.Default.LogGlobalMessages;
+            textBoxTrade.Text = System.Configuration.ConfigurationManager.AppSettings["TradeFinds"];
+            textBoxGlobal.Text = System.Configuration.ConfigurationManager.AppSettings["GlobalFinds"];
+            RestoreSize();
 			this.Resize += Main_Resize;
 			if (!LogMonitor.IsValidLogPath(txtLogPath.Text)) {
 				string DefaultLogPath;
@@ -61,7 +62,7 @@ namespace PoEWhisperNotifier {
 			}
 			StartMonitoring(true);
 			this.ResizeEnd += OnResizeEnd;
-		}
+        }
 
 		private void RestoreSize() {
 			if (Settings.Default.PreviousSize.Width > 50 && Settings.Default.PreviousSize.Height > 50) {
@@ -140,7 +141,7 @@ namespace PoEWhisperNotifier {
 			Monitor.MessageReceived += ProcessMessage;
 			IdleManager.BeginMonitoring();
 			AppendMessage("Program started at " + DateTime.Now.ToShortTimeString() + ".");
-		}
+        }
 
 		private void StopMonitoring() {
 			cmdStart.Enabled = true;
@@ -156,12 +157,30 @@ namespace PoEWhisperNotifier {
 			SendNotification(Message, true);
 		}
 
-		void ProcessMessage(MessageData obj) {
-			if (obj.MessageType == LogMessageType.Party && !Settings.Default.LogPartyMessages)
+		void ProcessMessage(MessageData obj)
+        {
+            var GetWantedTrade = System.Configuration.ConfigurationManager.AppSettings["TradeFinds"].ToLower();
+            var WantedTrade = GetWantedTrade.Split('|');
+            string checkTrade = obj.Message.ToLower();
+
+            var GetWantedGlobal = System.Configuration.ConfigurationManager.AppSettings["GlobalFinds"].ToLower();
+            var WantedGlobal = GetWantedGlobal.Split('|');
+            string checkGlobal = obj.Message.ToLower();
+
+
+            if (obj.MessageType == LogMessageType.Party && !Settings.Default.LogPartyMessages)
 				return;
-			if (obj.MessageType == LogMessageType.Guild && !Settings.Default.LogGuildMessages)
-				return;
-			if (Settings.Default.NotifyMinimizedOnly && IsPoeActive()) {
+            if (obj.MessageType == LogMessageType.Guild && !Settings.Default.LogGuildMessages)
+                return;
+            if (obj.MessageType == LogMessageType.Trade && !Settings.Default.LogTradeMessages)
+                return;
+            if (obj.MessageType == LogMessageType.Trade && !WantedTrade.Any(checkTrade.Contains))
+                return;
+            if (obj.MessageType == LogMessageType.Global && !Settings.Default.LogGlobalMessages)
+                return;
+            if (obj.MessageType == LogMessageType.Global && !WantedGlobal.Any(checkGlobal.Contains))
+                return;
+            if (Settings.Default.NotifyMinimizedOnly && IsPoeActive()) {
 				if (!IdleManager.IsUserIdle) {
 					// If the user isn't idle, replay the message if they do go idle.
 					IdleManager.AddIdleAction(() => ProcessMessage(obj));
@@ -279,10 +298,7 @@ namespace PoEWhisperNotifier {
 					}));
 				});
 				this.Visible = false;
-			} else {
-				this.WindowState = FormWindowState.Minimized;
 			}
-			throw new InvalidOperationException("Test exception");
 		}
 
 		private void notifyOnlyWhenMinimizedToolStripMenuItem_Click(object sender, EventArgs e) {
@@ -333,9 +349,23 @@ namespace PoEWhisperNotifier {
 			tsmLogGuildMessages.Checked = !tsmLogGuildMessages.Checked;
 			Settings.Default.LogGuildMessages = tsmLogGuildMessages.Checked;
 			Settings.Default.Save();
-		}
+        }
 
-		private void tsmStartMinimized_Click(object sender, EventArgs e) {
+        private void tsmLogTradeMessages_Click(object sender, EventArgs e)
+        {
+            tsmLogTradeMessages.Checked = !tsmLogTradeMessages.Checked;
+            Settings.Default.LogTradeMessages = tsmLogTradeMessages.Checked;
+            Settings.Default.Save();
+        }
+
+        private void tsmLogGlobalMessages_Click(object sender, EventArgs e)
+        {
+            tsmLogGlobalMessages.Checked = !tsmLogGlobalMessages.Checked;
+            Settings.Default.LogGlobalMessages = tsmLogGlobalMessages.Checked;
+            Settings.Default.Save();
+        }
+
+        private void tsmStartMinimized_Click(object sender, EventArgs e) {
 			tsmStartMinimized.Checked = !tsmStartMinimized.Checked;
 			Settings.Default.StartMinimized = tsmStartMinimized.Checked;
 			Settings.Default.Save();
@@ -347,10 +377,38 @@ namespace PoEWhisperNotifier {
 			Settings.Default.Save();
 			NotificationIcon.Visible = Settings.Default.TrayNotifications || Settings.Default.MinimizeToTray;
 		}
+        private void refreshButton_Click(object sender, EventArgs e)
+        {
+            AddUpdateAppSettings("TradeFinds", textBoxTrade.Text);
+            AddUpdateAppSettings("GlobalFinds", textBoxGlobal.Text);
+        }
 
-		// TODO: Merge common functionality below, and ideally of most of these enable buttons too.
+        static void AddUpdateAppSettings(string key, string value)
+        {
+            try
+            {
+                var configFile = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+                var settings = configFile.AppSettings.Settings;
+                if (settings[key] == null)
+                {
+                    settings.Add(key, value);
+                }
+                else
+                {
+                    settings[key].Value = value;
+                }
+                configFile.Save(ConfigurationSaveMode.Modified);
+                ConfigurationManager.RefreshSection(configFile.AppSettings.SectionInformation.Name);
+            }
+            catch (ConfigurationErrorsException)
+            {
+                Console.WriteLine("Error writing app settings");
+            }
+        }
 
-		private void tsmEnablePushbullet_Click(object sender, EventArgs e) {
+        // TODO: Merge common functionality below, and ideally of most of these enable buttons too.
+
+        private void tsmEnablePushbullet_Click(object sender, EventArgs e) {
 			tsmEnablePushBullet.Checked = !tsmEnablePushBullet.Checked;
 			Settings.Default.EnablePushbullet = tsmEnablePushBullet.Checked;
 			Settings.Default.Save();
@@ -459,5 +517,5 @@ namespace PoEWhisperNotifier {
 
 		private SoundPlayer SoundPlayer = new SoundPlayer("Content\\notify.wav");
 		private LogMonitor Monitor;
-	}
+    }
 }

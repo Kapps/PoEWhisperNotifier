@@ -61,7 +61,15 @@ namespace PoEWhisperNotifier {
         /// <summary>
         /// A guild message was sent or received.
         /// </summary>
-        Guild = 5
+        Guild = 5,
+        /// <summary>
+        /// A guild message was sent or received.
+        /// </summary>
+        Trade = 6,
+        /// <summary>
+        /// A guild message was sent or received.
+        /// </summary>
+        Global = 7
 
     }
 
@@ -225,9 +233,9 @@ namespace PoEWhisperNotifier {
 		}
 
 		// Group 1 = Chat Type, Group 2 = Username, Group 3 = Contents
-		private static readonly Regex ChatRegex = new Regex(@"^.+?\ .+?\ .+?\ .+?\ \[.+?\]\ (%|@From|@От кого|@De|&)(.+?):\ (.+)$");
+		private static readonly Regex ChatRegex = new Regex(@"^.+?\ .+?\ .+?\ .+?\ \[.+?\]\ (%|@From|@От кого|@De|\$|&|#)(.+?):\ (.+)$");
 		private static readonly Regex DisconnectRegex = new Regex(@"^.+\ .+\ .+\ .+\ \[.+\]\ Abnormal disconnect:(.+)");
-		private static readonly Dictionary<string, LogMessageType> SymbolToMessageType = new Dictionary<string, LogMessageType>() { { "%", LogMessageType.Party }, { "@", LogMessageType.Whisper }, { "&", LogMessageType.Guild } };
+		private static readonly Dictionary<string, LogMessageType> SymbolToMessageType = new Dictionary<string, LogMessageType>() { { "%", LogMessageType.Party }, { "@", LogMessageType.Whisper }, { "&", LogMessageType.Guild }, { "$", LogMessageType.Trade }, { "#", LogMessageType.Global } };
 
 		private FileStream _LogStream;
 		private Thread _LogThread;

@@ -12,7 +12,7 @@ namespace PoEWhisperNotifier.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "15.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "14.0.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -37,7 +37,7 @@ namespace PoEWhisperNotifier.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool NotifyMinimizedOnly {
             get {
                 return ((bool)(this["NotifyMinimizedOnly"]));
@@ -49,7 +49,7 @@ namespace PoEWhisperNotifier.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool TrayNotifications {
             get {
                 return ((bool)(this["TrayNotifications"]));
@@ -109,7 +109,7 @@ namespace PoEWhisperNotifier.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool EnableSound {
             get {
                 return ((bool)(this["EnableSound"]));
@@ -181,7 +181,7 @@ namespace PoEWhisperNotifier.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool FlashTaskbar {
             get {
                 return ((bool)(this["FlashTaskbar"]));
@@ -200,6 +200,30 @@ namespace PoEWhisperNotifier.Properties {
             }
             set {
                 this["StartMinimized"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool LogTradeMessages {
+            get {
+                return ((bool)(this["LogTradeMessages"]));
+            }
+            set {
+                this["LogTradeMessages"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool LogGlobalMessages {
+            get {
+                return ((bool)(this["LogGlobalMessages"]));
+            }
+            set {
+                this["LogGlobalMessages"] = value;
             }
         }
     }

@@ -6,10 +6,10 @@
       <Value Profile="(Default)">C:\Program Files (x86)\Grinding Gear Games\Path of Exile\logs\Client.txt</Value>
     </Setting>
     <Setting Name="NotifyMinimizedOnly" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">True</Value>
+      <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="TrayNotifications" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">True</Value>
+      <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="SerializedSmtpData" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
@@ -24,7 +24,7 @@
       <Value Profile="(Default)" />
     </Setting>
     <Setting Name="EnableSound" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">True</Value>
+      <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="MinimizeToTray" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
@@ -42,9 +42,15 @@
       <Value Profile="(Default)">0, 0</Value>
     </Setting>
     <Setting Name="FlashTaskbar" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">True</Value>
+      <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="StartMinimized" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="LogTradeMessages" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="LogGlobalMessages" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
   </Settings>
