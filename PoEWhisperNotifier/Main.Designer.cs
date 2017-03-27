@@ -38,6 +38,7 @@
             this.tsmLogPartyMessages = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmLogGuildMessages = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmLogTradeMessages = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmLogGlobalMessages = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmEnableTrayNotifications = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmEnableSound = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmEnableSMTPNotifications = new System.Windows.Forms.ToolStripMenuItem();
@@ -49,8 +50,9 @@
             this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmTrimLogFile = new System.Windows.Forms.ToolStripMenuItem();
             this.testNotificationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.clearHistoryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.NotificationIcon = new System.Windows.Forms.NotifyIcon(this.components);
-            this.textBoxTrade = new System.Windows.Forms.TextBox();
+            this.textBoxTradeInclude = new System.Windows.Forms.TextBox();
             this.cmdStart = new System.Windows.Forms.Button();
             this.cmdStop = new System.Windows.Forms.Button();
             this.txtLogPath = new System.Windows.Forms.TextBox();
@@ -58,9 +60,14 @@
             this.label2 = new System.Windows.Forms.Label();
             this.rtbHistory = new System.Windows.Forms.RichTextBox();
             this.refreshButton = new System.Windows.Forms.Button();
-            this.tsmLogGlobalMessages = new System.Windows.Forms.ToolStripMenuItem();
             this.label3 = new System.Windows.Forms.Label();
-            this.textBoxGlobal = new System.Windows.Forms.TextBox();
+            this.textBoxGlobalInclude = new System.Windows.Forms.TextBox();
+            this.textBoxTradeExclude = new System.Windows.Forms.TextBox();
+            this.textBoxGlobalExclude = new System.Windows.Forms.TextBox();
+            this.label4 = new System.Windows.Forms.Label();
+            this.label5 = new System.Windows.Forms.Label();
+            this.label6 = new System.Windows.Forms.Label();
+            this.label7 = new System.Windows.Forms.Label();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -70,7 +77,8 @@
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
             this.editToolStripMenuItem,
-            this.toolsToolStripMenuItem});
+            this.toolsToolStripMenuItem,
+            this.clearHistoryToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Padding = new System.Windows.Forms.Padding(2, 1, 0, 1);
@@ -140,6 +148,13 @@
             this.tsmLogTradeMessages.Size = new System.Drawing.Size(239, 22);
             this.tsmLogTradeMessages.Text = "Include Trad&e Messages";
             this.tsmLogTradeMessages.Click += new System.EventHandler(this.tsmLogTradeMessages_Click);
+            // 
+            // tsmLogGlobalMessages
+            // 
+            this.tsmLogGlobalMessages.Name = "tsmLogGlobalMessages";
+            this.tsmLogGlobalMessages.Size = new System.Drawing.Size(239, 22);
+            this.tsmLogGlobalMessages.Text = "Include Global Messages";
+            this.tsmLogGlobalMessages.Click += new System.EventHandler(this.tsmLogGlobalMessages_Click);
             // 
             // tsmEnableTrayNotifications
             // 
@@ -220,20 +235,27 @@
             this.testNotificationToolStripMenuItem.Text = "Test &Notification";
             this.testNotificationToolStripMenuItem.Click += new System.EventHandler(this.testNotificationToolStripMenuItem_Click);
             // 
+            // clearHistoryToolStripMenuItem
+            // 
+            this.clearHistoryToolStripMenuItem.Name = "clearHistoryToolStripMenuItem";
+            this.clearHistoryToolStripMenuItem.Size = new System.Drawing.Size(87, 22);
+            this.clearHistoryToolStripMenuItem.Text = "Clear History";
+            this.clearHistoryToolStripMenuItem.Click += new System.EventHandler(this.clearHistoryToolStripMenuItem_Click);
+            // 
             // NotificationIcon
             // 
             this.NotificationIcon.Text = "PoE Whisper Notifier";
             this.NotificationIcon.Visible = true;
             // 
-            // textBoxTrade
+            // textBoxTradeInclude
             // 
-            this.textBoxTrade.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.textBoxTradeInclude.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBoxTrade.Location = new System.Drawing.Point(165, 51);
-            this.textBoxTrade.Margin = new System.Windows.Forms.Padding(2);
-            this.textBoxTrade.Name = "textBoxTrade";
-            this.textBoxTrade.Size = new System.Drawing.Size(604, 23);
-            this.textBoxTrade.TabIndex = 5;
+            this.textBoxTradeInclude.Location = new System.Drawing.Point(222, 51);
+            this.textBoxTradeInclude.Margin = new System.Windows.Forms.Padding(2);
+            this.textBoxTradeInclude.Name = "textBoxTradeInclude";
+            this.textBoxTradeInclude.Size = new System.Drawing.Size(194, 23);
+            this.textBoxTradeInclude.TabIndex = 5;
             // 
             // cmdStart
             // 
@@ -319,13 +341,6 @@
             this.refreshButton.UseVisualStyleBackColor = true;
             this.refreshButton.Click += new System.EventHandler(this.refreshButton_Click);
             // 
-            // tsmLogGlobalMessages
-            // 
-            this.tsmLogGlobalMessages.Name = "tsmLogGlobalMessages";
-            this.tsmLogGlobalMessages.Size = new System.Drawing.Size(239, 22);
-            this.tsmLogGlobalMessages.Text = "Include Global Messages";
-            this.tsmLogGlobalMessages.Click += new System.EventHandler(this.tsmLogGlobalMessages_Click);
-            // 
             // label3
             // 
             this.label3.AutoSize = true;
@@ -336,29 +351,95 @@
             this.label3.TabIndex = 8;
             this.label3.Text = "Find Global Messages:";
             // 
-            // textBoxGlobal
+            // textBoxGlobalInclude
             // 
-            this.textBoxGlobal.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.textBoxGlobalInclude.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBoxGlobal.Location = new System.Drawing.Point(165, 79);
-            this.textBoxGlobal.Margin = new System.Windows.Forms.Padding(2);
-            this.textBoxGlobal.Name = "textBoxGlobal";
-            this.textBoxGlobal.Size = new System.Drawing.Size(604, 23);
-            this.textBoxGlobal.TabIndex = 9;
+            this.textBoxGlobalInclude.Location = new System.Drawing.Point(222, 79);
+            this.textBoxGlobalInclude.Margin = new System.Windows.Forms.Padding(2);
+            this.textBoxGlobalInclude.Name = "textBoxGlobalInclude";
+            this.textBoxGlobalInclude.Size = new System.Drawing.Size(194, 23);
+            this.textBoxGlobalInclude.TabIndex = 9;
+            // 
+            // textBoxTradeExclude
+            // 
+            this.textBoxTradeExclude.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.textBoxTradeExclude.Location = new System.Drawing.Point(491, 51);
+            this.textBoxTradeExclude.Margin = new System.Windows.Forms.Padding(2);
+            this.textBoxTradeExclude.Name = "textBoxTradeExclude";
+            this.textBoxTradeExclude.Size = new System.Drawing.Size(269, 23);
+            this.textBoxTradeExclude.TabIndex = 10;
+            // 
+            // textBoxGlobalExclude
+            // 
+            this.textBoxGlobalExclude.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.textBoxGlobalExclude.Location = new System.Drawing.Point(491, 78);
+            this.textBoxGlobalExclude.Margin = new System.Windows.Forms.Padding(2);
+            this.textBoxGlobalExclude.Name = "textBoxGlobalExclude";
+            this.textBoxGlobalExclude.Size = new System.Drawing.Size(269, 23);
+            this.textBoxGlobalExclude.TabIndex = 11;
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(162, 54);
+            this.label4.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(53, 17);
+            this.label4.TabIndex = 12;
+            this.label4.Text = "Include";
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(165, 82);
+            this.label5.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(53, 17);
+            this.label5.TabIndex = 13;
+            this.label5.Text = "Include";
+            // 
+            // label6
+            // 
+            this.label6.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(430, 54);
+            this.label6.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(57, 17);
+            this.label6.TabIndex = 14;
+            this.label6.Text = "Exclude";
+            // 
+            // label7
+            // 
+            this.label7.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(430, 82);
+            this.label7.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(57, 17);
+            this.label7.TabIndex = 15;
+            this.label7.Text = "Exclude";
             // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.ClientSize = new System.Drawing.Size(863, 640);
-            this.Controls.Add(this.textBoxGlobal);
+            this.Controls.Add(this.label7);
+            this.Controls.Add(this.label6);
+            this.Controls.Add(this.label5);
+            this.Controls.Add(this.label4);
+            this.Controls.Add(this.textBoxGlobalExclude);
+            this.Controls.Add(this.textBoxTradeExclude);
+            this.Controls.Add(this.textBoxGlobalInclude);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.refreshButton);
             this.Controls.Add(this.cmdStart);
             this.Controls.Add(this.cmdStop);
             this.Controls.Add(this.txtLogPath);
             this.Controls.Add(this.label1);
-            this.Controls.Add(this.textBoxTrade);
+            this.Controls.Add(this.textBoxTradeInclude);
             this.Controls.Add(this.rtbHistory);
             this.Controls.Add(this.menuStrip1);
             this.Controls.Add(this.label2);
@@ -397,7 +478,7 @@
 		private System.Windows.Forms.ToolStripMenuItem tsmTrimLogFile;
 		private System.Windows.Forms.ToolStripMenuItem testNotificationToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem tsmStartMinimized;
-        private System.Windows.Forms.TextBox textBoxTrade;
+        private System.Windows.Forms.TextBox textBoxTradeInclude;
         private System.Windows.Forms.Button cmdStart;
         private System.Windows.Forms.Button cmdStop;
         private System.Windows.Forms.TextBox txtLogPath;
@@ -407,7 +488,14 @@
         private System.Windows.Forms.Button refreshButton;
         private System.Windows.Forms.ToolStripMenuItem tsmLogGlobalMessages;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.TextBox textBoxGlobal;
+        private System.Windows.Forms.TextBox textBoxGlobalInclude;
+        private System.Windows.Forms.ToolStripMenuItem clearHistoryToolStripMenuItem;
+        private System.Windows.Forms.TextBox textBoxTradeExclude;
+        private System.Windows.Forms.TextBox textBoxGlobalExclude;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.Label label7;
     }
 }
 

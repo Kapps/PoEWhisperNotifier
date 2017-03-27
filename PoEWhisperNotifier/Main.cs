@@ -49,8 +49,10 @@ namespace PoEWhisperNotifier
             tsmLogGuildMessages.Checked = Settings.Default.LogGuildMessages;
             tsmLogTradeMessages.Checked = Settings.Default.LogTradeMessages;
             tsmLogGlobalMessages.Checked = Settings.Default.LogGlobalMessages;
-            textBoxTrade.Text = System.Configuration.ConfigurationManager.AppSettings["TradeFinds"];
-            textBoxGlobal.Text = System.Configuration.ConfigurationManager.AppSettings["GlobalFinds"];
+            textBoxTradeInclude.Text = ConfigurationManager.AppSettings["TradeFindsInclude"];
+            textBoxGlobalInclude.Text = ConfigurationManager.AppSettings["GlobalFindsInclude"];
+            textBoxTradeExclude.Text = ConfigurationManager.AppSettings["TradeFindsExclude"];
+            textBoxGlobalExclude.Text = ConfigurationManager.AppSettings["GlobalFindsExclude"];
             RestoreSize();
 			this.Resize += Main_Resize;
 			if (!LogMonitor.IsValidLogPath(txtLogPath.Text)) {
@@ -159,14 +161,41 @@ namespace PoEWhisperNotifier
 
 		void ProcessMessage(MessageData obj)
         {
-            var GetWantedTrade = System.Configuration.ConfigurationManager.AppSettings["TradeFinds"].ToLower();
+            var GetWantedTrade = ConfigurationManager.AppSettings["TradeFindsInclude"].ToLower();
+            var GetUnwantedTrade = ConfigurationManager.AppSettings["TradeFindsExclude"].ToLower();
             var WantedTrade = GetWantedTrade.Split('|');
+            var UnwantedTrade = GetUnwantedTrade.Split('|');
             string checkTrade = obj.Message.ToLower();
 
-            var GetWantedGlobal = System.Configuration.ConfigurationManager.AppSettings["GlobalFinds"].ToLower();
+            var GetWantedGlobal = ConfigurationManager.AppSettings["GlobalFindsInclude"].ToLower();
+            var GetUnwantedGlobal = ConfigurationManager.AppSettings["GlobalFindsExclude"].ToLower();
             var WantedGlobal = GetWantedGlobal.Split('|');
+            var UnwantedGlobal = GetUnwantedGlobal.Split('|');
             string checkGlobal = obj.Message.ToLower();
 
+            var TradeExclude = false;
+            var GlobalExclude = false;
+            
+
+            // Check if need to exclude or not
+            if (GetUnwantedTrade == "")
+            {
+                TradeExclude = false;
+            }
+            else if (GetUnwantedTrade != "")
+            {
+                TradeExclude = true;
+            }
+
+            if (GetUnwantedGlobal == "")
+            {
+                GlobalExclude = false;
+            }
+            else if (GetUnwantedGlobal != "")
+            {
+                GlobalExclude = true;
+            }
+            // End of exclude check
 
             if (obj.MessageType == LogMessageType.Party && !Settings.Default.LogPartyMessages)
 				return;
@@ -174,12 +203,34 @@ namespace PoEWhisperNotifier
                 return;
             if (obj.MessageType == LogMessageType.Trade && !Settings.Default.LogTradeMessages)
                 return;
-            if (obj.MessageType == LogMessageType.Trade && !WantedTrade.Any(checkTrade.Contains))
-                return;
             if (obj.MessageType == LogMessageType.Global && !Settings.Default.LogGlobalMessages)
                 return;
-            if (obj.MessageType == LogMessageType.Global && !WantedGlobal.Any(checkGlobal.Contains))
-                return;
+
+
+            if (TradeExclude)
+            {
+                if (obj.MessageType == LogMessageType.Trade && (!WantedTrade.Any(checkTrade.Contains) || UnwantedTrade.Any(checkTrade.Contains)))
+                    return;
+            }
+            else
+            {
+                if (obj.MessageType == LogMessageType.Trade && !WantedTrade.Any(checkTrade.Contains))
+                    return;
+            }
+
+
+            if (GlobalExclude)
+            {
+                if (obj.MessageType == LogMessageType.Global && (!WantedGlobal.Any(checkGlobal.Contains) || UnwantedTrade.Any(checkGlobal.Contains)))
+                    return;
+            }
+            else
+            {
+                if (obj.MessageType == LogMessageType.Global && !WantedTrade.Any(checkGlobal.Contains))
+                    return;
+            }
+
+
             if (Settings.Default.NotifyMinimizedOnly && IsPoeActive()) {
 				if (!IdleManager.IsUserIdle) {
 					// If the user isn't idle, replay the message if they do go idle.
@@ -377,10 +428,18 @@ namespace PoEWhisperNotifier
 			Settings.Default.Save();
 			NotificationIcon.Visible = Settings.Default.TrayNotifications || Settings.Default.MinimizeToTray;
 		}
+
         private void refreshButton_Click(object sender, EventArgs e)
         {
-            AddUpdateAppSettings("TradeFinds", textBoxTrade.Text);
-            AddUpdateAppSettings("GlobalFinds", textBoxGlobal.Text);
+            AddUpdateAppSettings("TradeFindsInclude", textBoxTradeInclude.Text);
+            AddUpdateAppSettings("TradeFindsExclude", textBoxTradeExclude.Text);
+            AddUpdateAppSettings("GlobalFindsInclude", textBoxGlobalInclude.Text);
+            AddUpdateAppSettings("GlobalFindsExclude", textBoxGlobalExclude.Text);
+        }
+
+        private void clearHistoryToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            rtbHistory.Text = "";
         }
 
         static void AddUpdateAppSettings(string key, string value)
@@ -517,5 +576,6 @@ namespace PoEWhisperNotifier
 
 		private SoundPlayer SoundPlayer = new SoundPlayer("Content\\notify.wav");
 		private LogMonitor Monitor;
+
     }
 }
