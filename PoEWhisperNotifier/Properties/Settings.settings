@@ -53,5 +53,35 @@
     <Setting Name="LogGlobalMessages" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
+    <Setting Name="TradeFindsInclude" Type="System.String" Scope="User">
+      <Value Profile="(Default)">shaper|rigwald</Value>
+    </Setting>
+    <Setting Name="TradeFindsExclude" Type="System.String" Scope="User">
+      <Value Profile="(Default)">wtb|wts</Value>
+    </Setting>
+    <Setting Name="GlobalFindsInclude" Type="System.String" Scope="User">
+      <Value Profile="(Default)">shaper|rigwald</Value>
+    </Setting>
+    <Setting Name="GlobalFindsExclude" Type="System.String" Scope="User">
+      <Value Profile="(Default)">wtb|wts</Value>
+    </Setting>
+    <Setting Name="EnablePartySound" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="EnableGuildSound" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="EnableTradeSound" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="EnableGlobalSound" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="EnableWhisperSound" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="LogWhisperMessages" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

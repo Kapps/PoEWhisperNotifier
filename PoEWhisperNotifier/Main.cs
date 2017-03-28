@@ -42,17 +42,21 @@ namespace PoEWhisperNotifier
 			tsmEnableTrayNotifications.Checked = Settings.Default.TrayNotifications;
 			tsmEnableSMTPNotifications.Checked = Settings.Default.EnableSmtpNotifications;
 			tsmEnablePushBullet.Checked = Settings.Default.EnablePushbullet;
-			tsmEnableSound.Checked = Settings.Default.EnableSound;
-			tsmMinimizeToTray.Checked = Settings.Default.MinimizeToTray;
+            EnablePartySound.Checked = Settings.Default.EnablePartySound;
+            EnableGuildSound.Checked = Settings.Default.EnableGuildSound;
+            EnableTradeSound.Checked = Settings.Default.EnableTradeSound;
+            EnableGlobalSound.Checked = Settings.Default.EnableGlobalSound;
+            EnableWhisperSound.Checked = Settings.Default.EnableWhisperSound;
+            tsmMinimizeToTray.Checked = Settings.Default.MinimizeToTray;
 			tsmStartMinimized.Checked = Settings.Default.StartMinimized;
 			tsmLogPartyMessages.Checked = Settings.Default.LogPartyMessages;
             tsmLogGuildMessages.Checked = Settings.Default.LogGuildMessages;
             tsmLogTradeMessages.Checked = Settings.Default.LogTradeMessages;
             tsmLogGlobalMessages.Checked = Settings.Default.LogGlobalMessages;
-            textBoxTradeInclude.Text = ConfigurationManager.AppSettings["TradeFindsInclude"];
-            textBoxGlobalInclude.Text = ConfigurationManager.AppSettings["GlobalFindsInclude"];
-            textBoxTradeExclude.Text = ConfigurationManager.AppSettings["TradeFindsExclude"];
-            textBoxGlobalExclude.Text = ConfigurationManager.AppSettings["GlobalFindsExclude"];
+            textBoxTradeInclude.Text = Settings.Default.TradeFindsInclude;
+            textBoxGlobalInclude.Text = Settings.Default.GlobalFindsInclude;
+            textBoxTradeExclude.Text = Settings.Default.TradeFindsExclude;
+            textBoxGlobalExclude.Text = Settings.Default.GlobalFindsExclude;
             RestoreSize();
 			this.Resize += Main_Resize;
 			if (!LogMonitor.IsValidLogPath(txtLogPath.Text)) {
@@ -161,14 +165,14 @@ namespace PoEWhisperNotifier
 
 		void ProcessMessage(MessageData obj)
         {
-            var GetWantedTrade = ConfigurationManager.AppSettings["TradeFindsInclude"].ToLower();
-            var GetUnwantedTrade = ConfigurationManager.AppSettings["TradeFindsExclude"].ToLower();
+            var GetWantedTrade = Settings.Default.TradeFindsInclude.ToLower();
+            var GetUnwantedTrade = Settings.Default.TradeFindsExclude.ToLower();
             var WantedTrade = GetWantedTrade.Split('|');
             var UnwantedTrade = GetUnwantedTrade.Split('|');
             string checkTrade = obj.Message.ToLower();
 
-            var GetWantedGlobal = ConfigurationManager.AppSettings["GlobalFindsInclude"].ToLower();
-            var GetUnwantedGlobal = ConfigurationManager.AppSettings["GlobalFindsExclude"].ToLower();
+            var GetWantedGlobal = Settings.Default.GlobalFindsInclude.ToLower();
+            var GetUnwantedGlobal = Settings.Default.GlobalFindsExclude.ToLower();
             var WantedGlobal = GetWantedGlobal.Split('|');
             var UnwantedGlobal = GetUnwantedGlobal.Split('|');
             string checkGlobal = obj.Message.ToLower();
@@ -197,8 +201,10 @@ namespace PoEWhisperNotifier
             }
             // End of exclude check
 
+            if (obj.MessageType == LogMessageType.Whisper && !Settings.Default.LogWhisperMessages)
+                return;
             if (obj.MessageType == LogMessageType.Party && !Settings.Default.LogPartyMessages)
-				return;
+                return;
             if (obj.MessageType == LogMessageType.Guild && !Settings.Default.LogGuildMessages)
                 return;
             if (obj.MessageType == LogMessageType.Trade && !Settings.Default.LogTradeMessages)
@@ -252,35 +258,83 @@ namespace PoEWhisperNotifier
                 case LogMessageType.Trade:
                     AppendText1(rtbHistory, Color.FromArgb(0xFE8000), ColoredMessage);
                     AppendText2(rtbHistory, Color.FromArgb(0xEFEFEF), Message.Message);
+                    if (Settings.Default.EnableTradeSound)
+                    {
+                        try
+                        {
+                            this.SoundPlayer.Play();
+                        }
+                        catch (Exception ex)
+                        {
+                            AppendMessage("<Error playing sound. This usually occurs due to the Content folder being missing.\r\n  Additional Info: " + ex.Message + ">");
+                        }
+                    }
                     break;
                 case LogMessageType.Global:
                     AppendText1(rtbHistory, Color.FromArgb(0xE00000), ColoredMessage);
                     AppendText2(rtbHistory, Color.FromArgb(0xEFEFEF), Message.Message);
+                    if (Settings.Default.EnableGlobalSound)
+                    {
+                        try
+                        {
+                            this.SoundPlayer.Play();
+                        }
+                        catch (Exception ex)
+                        {
+                            AppendMessage("<Error playing sound. This usually occurs due to the Content folder being missing.\r\n  Additional Info: " + ex.Message + ">");
+                        }
+                    }
                     break;
                 case LogMessageType.Guild:
                     AppendText1(rtbHistory, Color.FromArgb(0x909090), ColoredMessage);
                     AppendText2(rtbHistory, Color.FromArgb(0xEFEFEF), Message.Message);
+                    if (Settings.Default.EnableGuildSound)
+                    {
+                        try
+                        {
+                            this.SoundPlayer.Play();
+                        }
+                        catch (Exception ex)
+                        {
+                            AppendMessage("<Error playing sound. This usually occurs due to the Content folder being missing.\r\n  Additional Info: " + ex.Message + ">");
+                        }
+                    }
                     break;
                 case LogMessageType.Whisper:
                     AppendText1(rtbHistory, Color.FromArgb(0x9C62D6), ColoredMessage);
                     AppendText2(rtbHistory, Color.FromArgb(0xEFEFEF), Message.Message);
+                    if (Settings.Default.EnableWhisperSound)
+                    {
+                        try
+                        {
+                            this.SoundPlayer.Play();
+                        }
+                        catch (Exception ex)
+                        {
+                            AppendMessage("<Error playing sound. This usually occurs due to the Content folder being missing.\r\n  Additional Info: " + ex.Message + ">");
+                        }
+                    }
                     break;
                 case LogMessageType.Party:
                     AppendText1(rtbHistory, Color.FromArgb(0x0D8ECD), ColoredMessage);
                     AppendText2(rtbHistory, Color.FromArgb(0xEFEFEF), Message.Message);
+                    if (Settings.Default.EnablePartySound)
+                    {
+                        try
+                        {
+                            this.SoundPlayer.Play();
+                        }
+                        catch (Exception ex)
+                        {
+                            AppendMessage("<Error playing sound. This usually occurs due to the Content folder being missing.\r\n  Additional Info: " + ex.Message + ">");
+                        }
+                    }
                     break;
             }
 
 			if (Settings.Default.TrayNotifications) {
 				NotificationIcon.Visible = true;
 				NotificationIcon.ShowBalloonTip(5000, Title, (Message.Sender == null ? "" : (Message.Sender + ": ")) + Message.Message, ToolTipIcon.Info);
-			}
-			if (Settings.Default.EnableSound) {
-				try {
-					this.SoundPlayer.Play();
-				} catch (Exception ex) {
-					AppendMessage("<Error playing sound. This usually occurs due to the Content folder being missing.\r\n  Additional Info: " + ex.Message + ">");
-				}
 			}
 			if (Settings.Default.EnableSmtpNotifications) {
 				// Feels wasteful to always reload, but really it should only take a millisecond or less.
@@ -439,13 +493,50 @@ namespace PoEWhisperNotifier
 			NotificationIcon.Visible = Settings.Default.TrayNotifications || Settings.Default.MinimizeToTray;
 		}
 
-		private void tsmEnableSound_Click(object sender, EventArgs e) {
-			tsmEnableSound.Checked = !tsmEnableSound.Checked;
-			Settings.Default.EnableSound = tsmEnableSound.Checked;
-			Settings.Default.Save();
-		}
+        private void EnablePartySound_Click(object sender, EventArgs e)
+        {
+            EnablePartySound.Checked = !EnablePartySound.Checked;
+            Settings.Default.EnablePartySound = EnablePartySound.Checked;
+            Settings.Default.Save();
+        }
 
-		private void tsmLogPartyMessages_Click(object sender, EventArgs e) {
+        private void EnableGuildSound_Click(object sender, EventArgs e)
+        {
+            EnableGuildSound.Checked = !EnableGuildSound.Checked;
+            Settings.Default.EnableGuildSound = EnableGuildSound.Checked;
+            Settings.Default.Save();
+        }
+
+        private void EnableTradeSound_Click(object sender, EventArgs e)
+        {
+            EnableTradeSound.Checked = !EnableTradeSound.Checked;
+            Settings.Default.EnableTradeSound = EnableTradeSound.Checked;
+            Settings.Default.Save();
+        }
+
+        private void EnableGlobalSound_Click(object sender, EventArgs e)
+        {
+            EnableGlobalSound.Checked = !EnableGlobalSound.Checked;
+            Settings.Default.EnableGlobalSound = EnableGlobalSound.Checked;
+            Settings.Default.Save();
+        }
+
+        private void EnableWhisperSound_Click(object sender, EventArgs e)
+        {
+            EnableWhisperSound.Checked = !EnableWhisperSound.Checked;
+            Settings.Default.EnableWhisperSound = EnableWhisperSound.Checked;
+            Settings.Default.Save();
+        }
+
+        private void tsmLogWhisperMessages_Click(object sender, EventArgs e)
+        {
+            tsmLogWhisperMessages.Checked = !tsmLogWhisperMessages.Checked;
+            Settings.Default.LogWhisperMessages = tsmLogWhisperMessages.Checked;
+            Settings.Default.Save();
+
+        }
+
+        private void tsmLogPartyMessages_Click(object sender, EventArgs e) {
 			tsmLogPartyMessages.Checked = !tsmLogPartyMessages.Checked;
 			Settings.Default.LogPartyMessages = tsmLogPartyMessages.Checked;
 			Settings.Default.Save();
@@ -486,10 +577,11 @@ namespace PoEWhisperNotifier
 
         private void refreshButton_Click(object sender, EventArgs e)
         {
-            AddUpdateAppSettings("TradeFindsInclude", textBoxTradeInclude.Text);
-            AddUpdateAppSettings("TradeFindsExclude", textBoxTradeExclude.Text);
-            AddUpdateAppSettings("GlobalFindsInclude", textBoxGlobalInclude.Text);
-            AddUpdateAppSettings("GlobalFindsExclude", textBoxGlobalExclude.Text);
+            Settings.Default.TradeFindsInclude = textBoxTradeInclude.Text;
+            Settings.Default.GlobalFindsInclude = textBoxGlobalInclude.Text;
+            Settings.Default.TradeFindsExclude = textBoxTradeExclude.Text;
+            Settings.Default.GlobalFindsExclude = textBoxGlobalExclude.Text;
+			Settings.Default.Save();
         }
 
         private void clearHistoryToolStripMenuItem_Click(object sender, EventArgs e)
@@ -631,6 +723,5 @@ namespace PoEWhisperNotifier
 
 		private SoundPlayer SoundPlayer = new SoundPlayer("Content\\notify.wav");
 		private LogMonitor Monitor;
-
     }
 }

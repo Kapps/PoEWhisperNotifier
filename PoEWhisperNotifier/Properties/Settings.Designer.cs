@@ -226,5 +226,125 @@ namespace PoEWhisperNotifier.Properties {
                 this["LogGlobalMessages"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("shaper|rigwald")]
+        public string TradeFindsInclude {
+            get {
+                return ((string)(this["TradeFindsInclude"]));
+            }
+            set {
+                this["TradeFindsInclude"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("wtb|wts")]
+        public string TradeFindsExclude {
+            get {
+                return ((string)(this["TradeFindsExclude"]));
+            }
+            set {
+                this["TradeFindsExclude"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("shaper|rigwald")]
+        public string GlobalFindsInclude {
+            get {
+                return ((string)(this["GlobalFindsInclude"]));
+            }
+            set {
+                this["GlobalFindsInclude"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("wtb|wts")]
+        public string GlobalFindsExclude {
+            get {
+                return ((string)(this["GlobalFindsExclude"]));
+            }
+            set {
+                this["GlobalFindsExclude"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool EnablePartySound {
+            get {
+                return ((bool)(this["EnablePartySound"]));
+            }
+            set {
+                this["EnablePartySound"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool EnableGuildSound {
+            get {
+                return ((bool)(this["EnableGuildSound"]));
+            }
+            set {
+                this["EnableGuildSound"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool EnableTradeSound {
+            get {
+                return ((bool)(this["EnableTradeSound"]));
+            }
+            set {
+                this["EnableTradeSound"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool EnableGlobalSound {
+            get {
+                return ((bool)(this["EnableGlobalSound"]));
+            }
+            set {
+                this["EnableGlobalSound"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool EnableWhisperSound {
+            get {
+                return ((bool)(this["EnableWhisperSound"]));
+            }
+            set {
+                this["EnableWhisperSound"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool LogWhisperMessages {
+            get {
+                return ((bool)(this["LogWhisperMessages"]));
+            }
+            set {
+                this["LogWhisperMessages"] = value;
+            }
+        }
     }
 }

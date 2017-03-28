@@ -36,11 +36,14 @@
             this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmNotifyMinimizedOnly = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmLogPartyMessages = new System.Windows.Forms.ToolStripMenuItem();
+            this.EnablePartySound = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmLogGuildMessages = new System.Windows.Forms.ToolStripMenuItem();
+            this.EnableGuildSound = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmLogTradeMessages = new System.Windows.Forms.ToolStripMenuItem();
+            this.EnableTradeSound = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmLogGlobalMessages = new System.Windows.Forms.ToolStripMenuItem();
+            this.EnableGlobalSound = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmEnableTrayNotifications = new System.Windows.Forms.ToolStripMenuItem();
-            this.tsmEnableSound = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmEnableSMTPNotifications = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmEnablePushBullet = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmMinimizeToTray = new System.Windows.Forms.ToolStripMenuItem();
@@ -68,6 +71,8 @@
             this.label5 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
+            this.tsmLogWhisperMessages = new System.Windows.Forms.ToolStripMenuItem();
+            this.EnableWhisperSound = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -109,8 +114,8 @@
             this.tsmLogGuildMessages,
             this.tsmLogTradeMessages,
             this.tsmLogGlobalMessages,
+            this.tsmLogWhisperMessages,
             this.tsmEnableTrayNotifications,
-            this.tsmEnableSound,
             this.tsmEnableSMTPNotifications,
             this.tsmEnablePushBullet,
             this.tsmMinimizeToTray,
@@ -130,31 +135,67 @@
             // 
             // tsmLogPartyMessages
             // 
+            this.tsmLogPartyMessages.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.EnablePartySound});
             this.tsmLogPartyMessages.Name = "tsmLogPartyMessages";
             this.tsmLogPartyMessages.Size = new System.Drawing.Size(239, 22);
             this.tsmLogPartyMessages.Text = "Include Part&y Messages";
             this.tsmLogPartyMessages.Click += new System.EventHandler(this.tsmLogPartyMessages_Click);
             // 
+            // EnablePartySound
+            // 
+            this.EnablePartySound.Name = "EnablePartySound";
+            this.EnablePartySound.Size = new System.Drawing.Size(152, 22);
+            this.EnablePartySound.Text = "Enable Sound";
+            this.EnablePartySound.Click += new System.EventHandler(this.EnablePartySound_Click);
+            // 
             // tsmLogGuildMessages
             // 
+            this.tsmLogGuildMessages.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.EnableGuildSound});
             this.tsmLogGuildMessages.Name = "tsmLogGuildMessages";
             this.tsmLogGuildMessages.Size = new System.Drawing.Size(239, 22);
             this.tsmLogGuildMessages.Text = "Include Guil&d Messages";
             this.tsmLogGuildMessages.Click += new System.EventHandler(this.tsmLogGuildMessages_Click);
             // 
+            // EnableGuildSound
+            // 
+            this.EnableGuildSound.Name = "EnableGuildSound";
+            this.EnableGuildSound.Size = new System.Drawing.Size(152, 22);
+            this.EnableGuildSound.Text = "Enable Sound";
+            this.EnableGuildSound.Click += new System.EventHandler(this.EnableGuildSound_Click);
+            // 
             // tsmLogTradeMessages
             // 
+            this.tsmLogTradeMessages.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.EnableTradeSound});
             this.tsmLogTradeMessages.Name = "tsmLogTradeMessages";
             this.tsmLogTradeMessages.Size = new System.Drawing.Size(239, 22);
             this.tsmLogTradeMessages.Text = "Include Trad&e Messages";
             this.tsmLogTradeMessages.Click += new System.EventHandler(this.tsmLogTradeMessages_Click);
             // 
+            // EnableTradeSound
+            // 
+            this.EnableTradeSound.Name = "EnableTradeSound";
+            this.EnableTradeSound.Size = new System.Drawing.Size(152, 22);
+            this.EnableTradeSound.Text = "Enable Sound";
+            this.EnableTradeSound.Click += new System.EventHandler(this.EnableTradeSound_Click);
+            // 
             // tsmLogGlobalMessages
             // 
+            this.tsmLogGlobalMessages.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.EnableGlobalSound});
             this.tsmLogGlobalMessages.Name = "tsmLogGlobalMessages";
             this.tsmLogGlobalMessages.Size = new System.Drawing.Size(239, 22);
             this.tsmLogGlobalMessages.Text = "Include Global Messages";
             this.tsmLogGlobalMessages.Click += new System.EventHandler(this.tsmLogGlobalMessages_Click);
+            // 
+            // EnableGlobalSound
+            // 
+            this.EnableGlobalSound.Name = "EnableGlobalSound";
+            this.EnableGlobalSound.Size = new System.Drawing.Size(152, 22);
+            this.EnableGlobalSound.Text = "Enable Sound";
+            this.EnableGlobalSound.Click += new System.EventHandler(this.EnableGlobalSound_Click);
             // 
             // tsmEnableTrayNotifications
             // 
@@ -162,13 +203,6 @@
             this.tsmEnableTrayNotifications.Size = new System.Drawing.Size(239, 22);
             this.tsmEnableTrayNotifications.Text = "Enable &Tray Notifications";
             this.tsmEnableTrayNotifications.Click += new System.EventHandler(this.tsmEnableTrayNotifications_Click);
-            // 
-            // tsmEnableSound
-            // 
-            this.tsmEnableSound.Name = "tsmEnableSound";
-            this.tsmEnableSound.Size = new System.Drawing.Size(239, 22);
-            this.tsmEnableSound.Text = "Enable S&ound";
-            this.tsmEnableSound.Click += new System.EventHandler(this.tsmEnableSound_Click);
             // 
             // tsmEnableSMTPNotifications
             // 
@@ -422,6 +456,22 @@
             this.label7.TabIndex = 15;
             this.label7.Text = "Exclude";
             // 
+            // tsmLogWhisperMessages
+            // 
+            this.tsmLogWhisperMessages.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.EnableWhisperSound});
+            this.tsmLogWhisperMessages.Name = "tsmLogWhisperMessages";
+            this.tsmLogWhisperMessages.Size = new System.Drawing.Size(239, 22);
+            this.tsmLogWhisperMessages.Text = "Include Whisper Message";
+            this.tsmLogWhisperMessages.Click += new System.EventHandler(this.tsmLogWhisperMessages_Click);
+            // 
+            // EnableWhisperSound
+            // 
+            this.EnableWhisperSound.Name = "EnableWhisperSound";
+            this.EnableWhisperSound.Size = new System.Drawing.Size(152, 22);
+            this.EnableWhisperSound.Text = "Enable Sound";
+            this.EnableWhisperSound.Click += new System.EventHandler(this.EnableWhisperSound_Click);
+            // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -470,7 +520,6 @@
 		private System.Windows.Forms.ToolStripMenuItem configureSMTPToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem tsmEnablePushBullet;
 		private System.Windows.Forms.ToolStripMenuItem configurePushBulletToolStripMenuItem;
-		private System.Windows.Forms.ToolStripMenuItem tsmEnableSound;
 		private System.Windows.Forms.ToolStripMenuItem tsmMinimizeToTray;
 		private System.Windows.Forms.ToolStripMenuItem tsmLogPartyMessages;
         private System.Windows.Forms.ToolStripMenuItem tsmLogGuildMessages;
@@ -497,6 +546,12 @@
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.ToolStripMenuItem EnablePartySound;
+        private System.Windows.Forms.ToolStripMenuItem EnableGuildSound;
+        private System.Windows.Forms.ToolStripMenuItem EnableTradeSound;
+        private System.Windows.Forms.ToolStripMenuItem EnableGlobalSound;
+        private System.Windows.Forms.ToolStripMenuItem tsmLogWhisperMessages;
+        private System.Windows.Forms.ToolStripMenuItem EnableWhisperSound;
     }
 }
 
