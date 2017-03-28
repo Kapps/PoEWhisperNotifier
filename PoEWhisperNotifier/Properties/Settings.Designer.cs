@@ -346,5 +346,17 @@ namespace PoEWhisperNotifier.Properties {
                 this["LogWhisperMessages"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool MuteAllSounds {
+            get {
+                return ((bool)(this["MuteAllSounds"]));
+            }
+            set {
+                this["MuteAllSounds"] = value;
+            }
+        }
     }
 }

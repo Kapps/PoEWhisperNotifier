@@ -47,6 +47,7 @@ namespace PoEWhisperNotifier
             EnableTradeSound.Checked = Settings.Default.EnableTradeSound;
             EnableGlobalSound.Checked = Settings.Default.EnableGlobalSound;
             EnableWhisperSound.Checked = Settings.Default.EnableWhisperSound;
+            muteAllSoundsToolStripMenuItem.Checked = Settings.Default.MuteAllSounds;
             tsmMinimizeToTray.Checked = Settings.Default.MinimizeToTray;
 			tsmStartMinimized.Checked = Settings.Default.StartMinimized;
 			tsmLogPartyMessages.Checked = Settings.Default.LogPartyMessages;
@@ -259,7 +260,7 @@ namespace PoEWhisperNotifier
                 case LogMessageType.Trade:
                     AppendText1(rtbHistory, Color.FromArgb(0xFE8000), ColoredMessage);
                     AppendText2(rtbHistory, Color.FromArgb(0xEFEFEF), Message.Message);
-                    if (Settings.Default.EnableTradeSound)
+                    if (Settings.Default.EnableTradeSound && !Settings.Default.MuteAllSounds)
                     {
                         try
                         {
@@ -274,7 +275,7 @@ namespace PoEWhisperNotifier
                 case LogMessageType.Global:
                     AppendText1(rtbHistory, Color.FromArgb(0xE00000), ColoredMessage);
                     AppendText2(rtbHistory, Color.FromArgb(0xEFEFEF), Message.Message);
-                    if (Settings.Default.EnableGlobalSound)
+                    if (Settings.Default.EnableGlobalSound && !Settings.Default.MuteAllSounds)
                     {
                         try
                         {
@@ -289,7 +290,7 @@ namespace PoEWhisperNotifier
                 case LogMessageType.Guild:
                     AppendText1(rtbHistory, Color.FromArgb(0x909090), ColoredMessage);
                     AppendText2(rtbHistory, Color.FromArgb(0xEFEFEF), Message.Message);
-                    if (Settings.Default.EnableGuildSound)
+                    if (Settings.Default.EnableGuildSound && !Settings.Default.MuteAllSounds)
                     {
                         try
                         {
@@ -304,7 +305,7 @@ namespace PoEWhisperNotifier
                 case LogMessageType.Whisper:
                     AppendText1(rtbHistory, Color.FromArgb(0x9C62D6), ColoredMessage);
                     AppendText2(rtbHistory, Color.FromArgb(0xEFEFEF), Message.Message);
-                    if (Settings.Default.EnableWhisperSound)
+                    if (Settings.Default.EnableWhisperSound && !Settings.Default.MuteAllSounds)
                     {
                         try
                         {
@@ -319,7 +320,7 @@ namespace PoEWhisperNotifier
                 case LogMessageType.Party:
                     AppendText1(rtbHistory, Color.FromArgb(0x0D8ECD), ColoredMessage);
                     AppendText2(rtbHistory, Color.FromArgb(0xEFEFEF), Message.Message);
-                    if (Settings.Default.EnablePartySound)
+                    if (Settings.Default.EnablePartySound && !Settings.Default.MuteAllSounds)
                     {
                         try
                         {
@@ -492,7 +493,14 @@ namespace PoEWhisperNotifier
 			Settings.Default.TrayNotifications = tsmEnableTrayNotifications.Checked;
 			Settings.Default.Save();
 			NotificationIcon.Visible = Settings.Default.TrayNotifications || Settings.Default.MinimizeToTray;
-		}
+        }
+
+        private void muteAllSoundsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            muteAllSoundsToolStripMenuItem.Checked = !muteAllSoundsToolStripMenuItem.Checked;
+            Settings.Default.MuteAllSounds = muteAllSoundsToolStripMenuItem.Checked;
+            Settings.Default.Save();
+        }
 
         private void EnablePartySound_Click(object sender, EventArgs e)
         {
