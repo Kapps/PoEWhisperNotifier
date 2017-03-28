@@ -53,6 +53,7 @@ namespace PoEWhisperNotifier
             tsmLogGuildMessages.Checked = Settings.Default.LogGuildMessages;
             tsmLogTradeMessages.Checked = Settings.Default.LogTradeMessages;
             tsmLogGlobalMessages.Checked = Settings.Default.LogGlobalMessages;
+            tsmLogWhisperMessages.Checked = Settings.Default.LogWhisperMessages;
             textBoxTradeInclude.Text = Settings.Default.TradeFindsInclude;
             textBoxGlobalInclude.Text = Settings.Default.GlobalFindsInclude;
             textBoxTradeExclude.Text = Settings.Default.TradeFindsExclude;
