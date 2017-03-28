@@ -221,12 +221,12 @@ namespace PoEWhisperNotifier
 
             if (GlobalExclude)
             {
-                if (obj.MessageType == LogMessageType.Global && (!WantedGlobal.Any(checkGlobal.Contains) || UnwantedTrade.Any(checkGlobal.Contains)))
+                if (obj.MessageType == LogMessageType.Global && (!WantedGlobal.Any(checkGlobal.Contains) || UnwantedGlobal.Any(checkGlobal.Contains)))
                     return;
             }
             else
             {
-                if (obj.MessageType == LogMessageType.Global && !WantedTrade.Any(checkGlobal.Contains))
+                if (obj.MessageType == LogMessageType.Global && !WantedGlobal.Any(checkGlobal.Contains))
                     return;
             }
 
