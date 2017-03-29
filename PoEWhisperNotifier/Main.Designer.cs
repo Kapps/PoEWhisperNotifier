@@ -34,6 +34,7 @@
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.muteAllSoundsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmNotifyMinimizedOnly = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmLogPartyMessages = new System.Windows.Forms.ToolStripMenuItem();
             this.EnablePartySound = new System.Windows.Forms.ToolStripMenuItem();
@@ -73,7 +74,6 @@
             this.label5 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
-            this.muteAllSoundsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -103,7 +103,7 @@
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(92, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.exitToolStripMenuItem.Text = "E&xit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
@@ -127,6 +127,13 @@
             this.editToolStripMenuItem.Name = "editToolStripMenuItem";
             this.editToolStripMenuItem.Size = new System.Drawing.Size(61, 22);
             this.editToolStripMenuItem.Text = "&Settings";
+            // 
+            // muteAllSoundsToolStripMenuItem
+            // 
+            this.muteAllSoundsToolStripMenuItem.Name = "muteAllSoundsToolStripMenuItem";
+            this.muteAllSoundsToolStripMenuItem.Size = new System.Drawing.Size(239, 22);
+            this.muteAllSoundsToolStripMenuItem.Text = "Mute &All Sounds";
+            this.muteAllSoundsToolStripMenuItem.Click += new System.EventHandler(this.muteAllSoundsToolStripMenuItem_Click);
             // 
             // tsmNotifyMinimizedOnly
             // 
@@ -189,13 +196,13 @@
             this.EnableGlobalSound});
             this.tsmLogGlobalMessages.Name = "tsmLogGlobalMessages";
             this.tsmLogGlobalMessages.Size = new System.Drawing.Size(239, 22);
-            this.tsmLogGlobalMessages.Text = "Include Global Messages";
+            this.tsmLogGlobalMessages.Text = "Include &Global Messages";
             this.tsmLogGlobalMessages.Click += new System.EventHandler(this.tsmLogGlobalMessages_Click);
             // 
             // EnableGlobalSound
             // 
             this.EnableGlobalSound.Name = "EnableGlobalSound";
-            this.EnableGlobalSound.Size = new System.Drawing.Size(146, 22);
+            this.EnableGlobalSound.Size = new System.Drawing.Size(152, 22);
             this.EnableGlobalSound.Text = "Enable Sound";
             this.EnableGlobalSound.Click += new System.EventHandler(this.EnableGlobalSound_Click);
             // 
@@ -205,13 +212,13 @@
             this.EnableWhisperSound});
             this.tsmLogWhisperMessages.Name = "tsmLogWhisperMessages";
             this.tsmLogWhisperMessages.Size = new System.Drawing.Size(239, 22);
-            this.tsmLogWhisperMessages.Text = "Include Whisper Message";
+            this.tsmLogWhisperMessages.Text = "Include &Whisper Message";
             this.tsmLogWhisperMessages.Click += new System.EventHandler(this.tsmLogWhisperMessages_Click);
             // 
             // EnableWhisperSound
             // 
             this.EnableWhisperSound.Name = "EnableWhisperSound";
-            this.EnableWhisperSound.Size = new System.Drawing.Size(146, 22);
+            this.EnableWhisperSound.Size = new System.Drawing.Size(152, 22);
             this.EnableWhisperSound.Text = "Enable Sound";
             this.EnableWhisperSound.Click += new System.EventHandler(this.EnableWhisperSound_Click);
             // 
@@ -277,7 +284,7 @@
             // 
             this.tsmTrimLogFile.Name = "tsmTrimLogFile";
             this.tsmTrimLogFile.Size = new System.Drawing.Size(162, 22);
-            this.tsmTrimLogFile.Text = "Trim Client.txt";
+            this.tsmTrimLogFile.Text = "Trim &Client.txt";
             this.tsmTrimLogFile.Click += new System.EventHandler(this.trimClienttxtToolStripMenuItem_Click);
             // 
             // testNotificationToolStripMenuItem
@@ -291,7 +298,7 @@
             // 
             this.clearHistoryToolStripMenuItem.Name = "clearHistoryToolStripMenuItem";
             this.clearHistoryToolStripMenuItem.Size = new System.Drawing.Size(87, 22);
-            this.clearHistoryToolStripMenuItem.Text = "Clear History";
+            this.clearHistoryToolStripMenuItem.Text = "&Clear History";
             this.clearHistoryToolStripMenuItem.Click += new System.EventHandler(this.clearHistoryToolStripMenuItem_Click);
             // 
             // NotificationIcon
@@ -307,7 +314,7 @@
             this.textBoxTradeInclude.Margin = new System.Windows.Forms.Padding(2);
             this.textBoxTradeInclude.Name = "textBoxTradeInclude";
             this.textBoxTradeInclude.Size = new System.Drawing.Size(194, 23);
-            this.textBoxTradeInclude.TabIndex = 5;
+            this.textBoxTradeInclude.TabIndex = 1;
             // 
             // cmdStart
             // 
@@ -317,7 +324,8 @@
             this.cmdStart.Margin = new System.Windows.Forms.Padding(2);
             this.cmdStart.Name = "cmdStart";
             this.cmdStart.Size = new System.Drawing.Size(863, 29);
-            this.cmdStart.TabIndex = 3;
+            this.cmdStart.TabIndex = 22;
+            this.cmdStart.TabStop = false;
             this.cmdStart.Text = "Start";
             this.cmdStart.UseVisualStyleBackColor = true;
             this.cmdStart.Click += new System.EventHandler(this.cmdStart_Click);
@@ -331,7 +339,8 @@
             this.cmdStop.Margin = new System.Windows.Forms.Padding(2);
             this.cmdStop.Name = "cmdStop";
             this.cmdStop.Size = new System.Drawing.Size(863, 29);
-            this.cmdStop.TabIndex = 2;
+            this.cmdStop.TabIndex = 22;
+            this.cmdStop.TabStop = false;
             this.cmdStop.Text = "Stop";
             this.cmdStop.UseVisualStyleBackColor = true;
             this.cmdStop.Click += new System.EventHandler(this.cmdStop_Click);
@@ -343,8 +352,9 @@
             this.txtLogPath.Location = new System.Drawing.Point(84, 24);
             this.txtLogPath.Margin = new System.Windows.Forms.Padding(2);
             this.txtLogPath.Name = "txtLogPath";
-            this.txtLogPath.Size = new System.Drawing.Size(768, 23);
-            this.txtLogPath.TabIndex = 1;
+            this.txtLogPath.Size = new System.Drawing.Size(769, 23);
+            this.txtLogPath.TabIndex = 22;
+            this.txtLogPath.TabStop = false;
             // 
             // label1
             // 
@@ -375,12 +385,13 @@
             this.rtbHistory.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.rtbHistory.ForeColor = System.Drawing.Color.White;
             this.rtbHistory.HideSelection = false;
-            this.rtbHistory.Location = new System.Drawing.Point(0, 101);
+            this.rtbHistory.Location = new System.Drawing.Point(11, 106);
             this.rtbHistory.Margin = new System.Windows.Forms.Padding(2);
             this.rtbHistory.Name = "rtbHistory";
             this.rtbHistory.ReadOnly = true;
-            this.rtbHistory.Size = new System.Drawing.Size(841, 463);
+            this.rtbHistory.Size = new System.Drawing.Size(842, 472);
             this.rtbHistory.TabIndex = 4;
+            this.rtbHistory.TabStop = false;
             this.rtbHistory.Text = "";
             // 
             // refreshButton
@@ -388,8 +399,8 @@
             this.refreshButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.refreshButton.Location = new System.Drawing.Point(775, 51);
             this.refreshButton.Name = "refreshButton";
-            this.refreshButton.Size = new System.Drawing.Size(75, 48);
-            this.refreshButton.TabIndex = 7;
+            this.refreshButton.Size = new System.Drawing.Size(78, 48);
+            this.refreshButton.TabIndex = 5;
             this.refreshButton.Text = "Reload";
             this.refreshButton.UseVisualStyleBackColor = true;
             this.refreshButton.Click += new System.EventHandler(this.refreshButton_Click);
@@ -412,7 +423,7 @@
             this.textBoxGlobalInclude.Margin = new System.Windows.Forms.Padding(2);
             this.textBoxGlobalInclude.Name = "textBoxGlobalInclude";
             this.textBoxGlobalInclude.Size = new System.Drawing.Size(194, 23);
-            this.textBoxGlobalInclude.TabIndex = 9;
+            this.textBoxGlobalInclude.TabIndex = 3;
             // 
             // textBoxTradeExclude
             // 
@@ -421,7 +432,7 @@
             this.textBoxTradeExclude.Margin = new System.Windows.Forms.Padding(2);
             this.textBoxTradeExclude.Name = "textBoxTradeExclude";
             this.textBoxTradeExclude.Size = new System.Drawing.Size(269, 23);
-            this.textBoxTradeExclude.TabIndex = 10;
+            this.textBoxTradeExclude.TabIndex = 2;
             // 
             // textBoxGlobalExclude
             // 
@@ -430,7 +441,7 @@
             this.textBoxGlobalExclude.Margin = new System.Windows.Forms.Padding(2);
             this.textBoxGlobalExclude.Name = "textBoxGlobalExclude";
             this.textBoxGlobalExclude.Size = new System.Drawing.Size(269, 23);
-            this.textBoxGlobalExclude.TabIndex = 11;
+            this.textBoxGlobalExclude.TabIndex = 4;
             // 
             // label4
             // 
@@ -473,13 +484,6 @@
             this.label7.Size = new System.Drawing.Size(57, 17);
             this.label7.TabIndex = 15;
             this.label7.Text = "Exclude";
-            // 
-            // muteAllSoundsToolStripMenuItem
-            // 
-            this.muteAllSoundsToolStripMenuItem.Name = "muteAllSoundsToolStripMenuItem";
-            this.muteAllSoundsToolStripMenuItem.Size = new System.Drawing.Size(239, 22);
-            this.muteAllSoundsToolStripMenuItem.Text = "Mute All Sounds";
-            this.muteAllSoundsToolStripMenuItem.Click += new System.EventHandler(this.muteAllSoundsToolStripMenuItem_Click);
             // 
             // Main
             // 

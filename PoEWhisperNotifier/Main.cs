@@ -449,19 +449,31 @@ namespace PoEWhisperNotifier
 			this.Close();
 		}
 
-		private void Main_Load(object sender, EventArgs e) {
-			if (Settings.Default.MinimizeToTray) {
+		private void Main_Load(object sender, EventArgs e)
+        {
+            if (Settings.Default.StartMinimized)
+            {
+                this.WindowState = FormWindowState.Minimized;
+            }
+            if (Settings.Default.MinimizeToTray) {
 				ThreadPool.QueueUserWorkItem((_) => {
 					Thread.Sleep(100); // HACK: Work around issue where minimizing to tray keeps icon in taskbar.
 					Invoke(new Action(() => {
-						this.WindowState = FormWindowState.Minimized;
-						NotificationIcon.Visible = true;
-						NotificationIcon.ShowBalloonTip(2000, "Whisper Notifier Started Minimized", "PoEWhisperNotifier started minimized. Double click the icon to show the window.", ToolTipIcon.Info);
+                        NotificationIcon.ShowBalloonTip(2000,
+                            "Whisper Notifier Started Minimized",
+                            "PoEWhisperNotifier started minimized. Double click the icon to show the window.",
+                            ToolTipIcon.Info
+                        );
+                        NotificationIcon.Visible = true;
 					}));
 				});
-				this.Visible = false;
-			}
-		}
+                if (Settings.Default.StartMinimized)
+                    this.ShowInTaskbar = false;
+            } else
+            {
+                this.Visible = false;
+            }
+        }
 
 		private void notifyOnlyWhenMinimizedToolStripMenuItem_Click(object sender, EventArgs e) {
 			tsmNotifyMinimizedOnly.Checked = !tsmNotifyMinimizedOnly.Checked;
