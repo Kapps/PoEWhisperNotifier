@@ -103,7 +103,7 @@
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(92, 22);
             this.exitToolStripMenuItem.Text = "E&xit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
@@ -202,7 +202,7 @@
             // EnableGlobalSound
             // 
             this.EnableGlobalSound.Name = "EnableGlobalSound";
-            this.EnableGlobalSound.Size = new System.Drawing.Size(152, 22);
+            this.EnableGlobalSound.Size = new System.Drawing.Size(146, 22);
             this.EnableGlobalSound.Text = "Enable Sound";
             this.EnableGlobalSound.Click += new System.EventHandler(this.EnableGlobalSound_Click);
             // 
@@ -218,7 +218,7 @@
             // EnableWhisperSound
             // 
             this.EnableWhisperSound.Name = "EnableWhisperSound";
-            this.EnableWhisperSound.Size = new System.Drawing.Size(152, 22);
+            this.EnableWhisperSound.Size = new System.Drawing.Size(146, 22);
             this.EnableWhisperSound.Text = "Enable Sound";
             this.EnableWhisperSound.Click += new System.EventHandler(this.EnableWhisperSound_Click);
             // 

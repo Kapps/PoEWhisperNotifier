@@ -148,7 +148,7 @@ namespace PoEWhisperNotifier
 			Monitor.BeginMonitoring();
 			Monitor.MessageReceived += ProcessMessage;
 			IdleManager.BeginMonitoring();
-			AppendMessage("Program started at " + DateTime.Now.ToShortTimeString() + ".");
+            AppendMessage("[" + DateTime.Now.ToShortTimeString() + "] Program started.");
         }
 
 		private void StopMonitoring() {
@@ -157,7 +157,7 @@ namespace PoEWhisperNotifier
 			this.Monitor.StopMonitoring();
 			IdleManager.StopMonitoring();
 			this.Monitor.MessageReceived -= ProcessMessage;
-			AppendMessage("Program stopped at " + DateTime.Now.ToShortTimeString() + ".");
+			AppendMessage("[" + DateTime.Now.ToShortTimeString() + "] Program stopped.");
 		}
 
 		private void testNotificationToolStripMenuItem_Click(object sender, EventArgs e) {
