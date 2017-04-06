@@ -59,6 +59,8 @@ namespace PoEWhisperNotifier
             textBoxGlobalInclude.Text = Settings.Default.GlobalFindsInclude;
             textBoxTradeExclude.Text = Settings.Default.TradeFindsExclude;
             textBoxGlobalExclude.Text = Settings.Default.GlobalFindsExclude;
+            rtbHistory.Font = Settings.Default.Font;
+            rtbHistory.BackColor = Settings.Default.BackgroundColor;
             RestoreSize();
 			this.Resize += Main_Resize;
 			if (!LogMonitor.IsValidLogPath(txtLogPath.Text)) {
@@ -740,9 +742,69 @@ namespace PoEWhisperNotifier
 					MessageBox.Show("Disabled SMTP notifications as your settings are invalid.");
 				}
 			}
-		}
+        }
 
-		private SoundPlayer SoundPlayer = new SoundPlayer("Content\\notify.wav");
+        private void fontToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // Save the existing font.
+            Font oldFont = Settings.Default.Font;
+
+            DialogResult result = fontDialog1.ShowDialog();
+
+            if (result == DialogResult.OK)
+            {
+                rtbHistory.Font = fontDialog1.Font;
+                Settings.Default.Font = fontDialog1.Font;
+                Settings.Default.Save();
+            }
+            else if (result == DialogResult.Cancel)
+            {
+                rtbHistory.Font = oldFont;
+            }
+        }
+
+        private void fontDialog1_Apply(object sender, EventArgs e)
+        {
+            rtbHistory.Font = fontDialog1.Font;
+            Settings.Default.Font = fontDialog1.Font;
+            Settings.Default.Save();
+        }
+
+        private void resetToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Settings.Default.Font = Settings.Default.DefaultFont;
+            Settings.Default.Save();
+            rtbHistory.Font = Settings.Default.DefaultFont;
+        }
+
+        private void backgroundColorToolStripMenuItem_Click(object sender, EventArgs e)
+        {            
+            // Save the existing font.
+            Color oldColor = Settings.Default.BackgroundColor;
+
+            DialogResult result = colorDialog1.ShowDialog();
+
+            if (result == DialogResult.OK)
+            {
+                rtbHistory.BackColor = colorDialog1.Color;
+                Settings.Default.BackgroundColor = colorDialog1.Color;
+                Settings.Default.Save();
+            }
+            else if (result == DialogResult.Cancel)
+            {
+                rtbHistory.BackColor = oldColor;
+            }
+        }
+
+        private void defaultToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Settings.Default.BackgroundColor = Settings.Default.DefaultBackgroundColor;
+            Settings.Default.Save();
+            rtbHistory.BackColor = Settings.Default.DefaultBackgroundColor;
+        }
+
+
+        private SoundPlayer SoundPlayer = new SoundPlayer("Content\\notify.wav");
 		private LogMonitor Monitor;
     }
 }

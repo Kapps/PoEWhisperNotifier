@@ -74,6 +74,12 @@
             this.label5 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
+            this.fontDialog1 = new System.Windows.Forms.FontDialog();
+            this.colorDialog1 = new System.Windows.Forms.ColorDialog();
+            this.fontToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.resetToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.backgroundColorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.defaultToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -85,6 +91,7 @@
             this.editToolStripMenuItem,
             this.toolsToolStripMenuItem,
             this.clearHistoryToolStripMenuItem});
+            this.menuStrip1.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.HorizontalStackWithOverflow;
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Padding = new System.Windows.Forms.Padding(2, 1, 0, 1);
@@ -123,10 +130,13 @@
             this.tsmMinimizeToTray,
             this.tsmStartMinimized,
             this.configureSMTPToolStripMenuItem,
-            this.configurePushBulletToolStripMenuItem});
+            this.configurePushBulletToolStripMenuItem,
+            this.fontToolStripMenuItem,
+            this.backgroundColorToolStripMenuItem});
             this.editToolStripMenuItem.Name = "editToolStripMenuItem";
             this.editToolStripMenuItem.Size = new System.Drawing.Size(61, 22);
             this.editToolStripMenuItem.Text = "&Settings";
+            this.editToolStripMenuItem.TextImageRelation = System.Windows.Forms.TextImageRelation.TextBeforeImage;
             // 
             // muteAllSoundsToolStripMenuItem
             // 
@@ -154,7 +164,7 @@
             // EnablePartySound
             // 
             this.EnablePartySound.Name = "EnablePartySound";
-            this.EnablePartySound.Size = new System.Drawing.Size(146, 22);
+            this.EnablePartySound.Size = new System.Drawing.Size(152, 22);
             this.EnablePartySound.Text = "Enable Sound";
             this.EnablePartySound.Click += new System.EventHandler(this.EnablePartySound_Click);
             // 
@@ -385,7 +395,7 @@
             this.rtbHistory.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.rtbHistory.ForeColor = System.Drawing.Color.White;
             this.rtbHistory.HideSelection = false;
-            this.rtbHistory.Location = new System.Drawing.Point(11, 106);
+            this.rtbHistory.Location = new System.Drawing.Point(10, 106);
             this.rtbHistory.Margin = new System.Windows.Forms.Padding(2);
             this.rtbHistory.Name = "rtbHistory";
             this.rtbHistory.ReadOnly = true;
@@ -485,6 +495,45 @@
             this.label7.TabIndex = 15;
             this.label7.Text = "Exclude";
             // 
+            // fontDialog1
+            // 
+            this.fontDialog1.Font = new System.Drawing.Font("Segoe UI", 9.75F);
+            this.fontDialog1.FontMustExist = true;
+            this.fontDialog1.ShowApply = true;
+            this.fontDialog1.Apply += new System.EventHandler(this.fontDialog1_Apply);
+            // 
+            // fontToolStripMenuItem
+            // 
+            this.fontToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.resetToolStripMenuItem});
+            this.fontToolStripMenuItem.Name = "fontToolStripMenuItem";
+            this.fontToolStripMenuItem.Size = new System.Drawing.Size(239, 22);
+            this.fontToolStripMenuItem.Text = "Font";
+            this.fontToolStripMenuItem.Click += new System.EventHandler(this.fontToolStripMenuItem_Click);
+            // 
+            // resetToolStripMenuItem
+            // 
+            this.resetToolStripMenuItem.Name = "resetToolStripMenuItem";
+            this.resetToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.resetToolStripMenuItem.Text = "Reset";
+            this.resetToolStripMenuItem.Click += new System.EventHandler(this.resetToolStripMenuItem_Click);
+            // 
+            // backgroundColorToolStripMenuItem
+            // 
+            this.backgroundColorToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.defaultToolStripMenuItem});
+            this.backgroundColorToolStripMenuItem.Name = "backgroundColorToolStripMenuItem";
+            this.backgroundColorToolStripMenuItem.Size = new System.Drawing.Size(239, 22);
+            this.backgroundColorToolStripMenuItem.Text = "Background Color";
+            this.backgroundColorToolStripMenuItem.Click += new System.EventHandler(this.backgroundColorToolStripMenuItem_Click);
+            // 
+            // defaultToolStripMenuItem
+            // 
+            this.defaultToolStripMenuItem.Name = "defaultToolStripMenuItem";
+            this.defaultToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.defaultToolStripMenuItem.Text = "Default";
+            this.defaultToolStripMenuItem.Click += new System.EventHandler(this.defaultToolStripMenuItem_Click);
+            // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -566,6 +615,12 @@
         private System.Windows.Forms.ToolStripMenuItem tsmLogWhisperMessages;
         private System.Windows.Forms.ToolStripMenuItem EnableWhisperSound;
         private System.Windows.Forms.ToolStripMenuItem muteAllSoundsToolStripMenuItem;
+        private System.Windows.Forms.FontDialog fontDialog1;
+        private System.Windows.Forms.ColorDialog colorDialog1;
+        private System.Windows.Forms.ToolStripMenuItem fontToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem resetToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem backgroundColorToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem defaultToolStripMenuItem;
     }
 }
 
