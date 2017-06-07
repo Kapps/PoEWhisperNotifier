@@ -476,6 +476,12 @@ namespace PoEWhisperNotifier
                 this.Visible = false;
             }
         }
+/*
+				this.Visible = false;
+			} else {
+				this.WindowState = FormWindowState.Minimized;
+			}
+		}*/
 
 		private void notifyOnlyWhenMinimizedToolStripMenuItem_Click(object sender, EventArgs e) {
 			tsmNotifyMinimizedOnly.Checked = !tsmNotifyMinimizedOnly.Checked;
