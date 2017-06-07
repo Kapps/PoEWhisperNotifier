@@ -6,10 +6,10 @@
       <Value Profile="(Default)">C:\Program Files (x86)\Grinding Gear Games\Path of Exile\logs\Client.txt</Value>
     </Setting>
     <Setting Name="NotifyMinimizedOnly" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">True</Value>
+      <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="TrayNotifications" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">True</Value>
+      <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="SerializedSmtpData" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
@@ -24,7 +24,7 @@
       <Value Profile="(Default)" />
     </Setting>
     <Setting Name="EnableSound" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">True</Value>
+      <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="MinimizeToTray" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
@@ -42,10 +42,61 @@
       <Value Profile="(Default)">0, 0</Value>
     </Setting>
     <Setting Name="FlashTaskbar" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">True</Value>
+      <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="StartMinimized" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="LogTradeMessages" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="LogGlobalMessages" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="TradeFindsInclude" Type="System.String" Scope="User">
+      <Value Profile="(Default)">shaper|rigwald</Value>
+    </Setting>
+    <Setting Name="TradeFindsExclude" Type="System.String" Scope="User">
+      <Value Profile="(Default)">wtb|wts</Value>
+    </Setting>
+    <Setting Name="GlobalFindsInclude" Type="System.String" Scope="User">
+      <Value Profile="(Default)">shaper|rigwald</Value>
+    </Setting>
+    <Setting Name="GlobalFindsExclude" Type="System.String" Scope="User">
+      <Value Profile="(Default)">wtb|wts</Value>
+    </Setting>
+    <Setting Name="EnablePartySound" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="EnableGuildSound" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="EnableTradeSound" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="EnableGlobalSound" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="EnableWhisperSound" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="LogWhisperMessages" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="MuteAllSounds" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="Font" Type="System.Drawing.Font" Scope="User">
+      <Value Profile="(Default)">Segoe UI, 9.75pt</Value>
+    </Setting>
+    <Setting Name="DefaultFont" Type="System.Drawing.Font" Scope="User">
+      <Value Profile="(Default)">Segoe UI, 9.75pt</Value>
+    </Setting>
+    <Setting Name="BackgroundColor" Type="System.Drawing.Color" Scope="User">
+      <Value Profile="(Default)">39, 40, 34</Value>
+    </Setting>
+    <Setting Name="DefaultBackgroundColor" Type="System.Drawing.Color" Scope="User">
+      <Value Profile="(Default)">39, 40, 34</Value>
     </Setting>
   </Settings>
 </SettingsFile>
