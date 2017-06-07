@@ -34,6 +34,7 @@ namespace PoEWhisperNotifier {
 			NotificationIcon.Icon = this.Icon;
 
 			// Have to initialize in the ctor in order to handle Load with Minimize to Tray.
+			this.MessageConfig = MessageSettings.LoadFromConfig();
 			NotificationIcon.Visible = Settings.Default.TrayNotifications || Settings.Default.MinimizeToTray;
 			NotificationIcon.BalloonTipClicked += NotificationIconClick;
 			NotificationIcon.DoubleClick += NotificationIconClick;
@@ -48,16 +49,13 @@ namespace PoEWhisperNotifier {
 			tsmEnableSound.Checked = Settings.Default.EnableSound;
 			tsmMinimizeToTray.Checked = Settings.Default.MinimizeToTray;
 			tsmStartMinimized.Checked = Settings.Default.StartMinimized;
-			tsmLogPartyMessages.Checked = Settings.Default.LogPartyMessages;
-			tsmLogGuildMessages.Checked = Settings.Default.LogGuildMessages;
 			RestoreSize();
 			this.Resize += Main_Resize;
 			if (!LogMonitor.IsValidLogPath(txtLogPath.Text)) {
-				string DefaultLogPath;
-				if (LogMonitor.TryGetDefaultLogPath(out DefaultLogPath))
+				if (LogMonitor.TryGetDefaultLogPath(out string DefaultLogPath))
 					txtLogPath.Text = DefaultLogPath;
 				else
-					AppendMessage("Unable to figure out client.txt location. You will have to manually set the path.");
+					LogMessage("Unable to figure out client.txt location. You will have to manually set the path.", null, LogMessageType.Status);
 			}
 			StartMonitoring(true);
 			this.ResizeEnd += OnResizeEnd;
@@ -125,21 +123,20 @@ namespace PoEWhisperNotifier {
 			if (!LogMonitor.IsValidLogPath(txtLogPath.Text)) {
 				string ErrMsg = "Failed to start " + (AutoStarted ? "automatically " : "") + "as the log path is invalid.";
 				if (AutoStarted)
-					AppendMessage(ErrMsg);
+					LogMessage(ErrMsg, null, LogMessageType.Status);
 				else
 					MessageBox.Show(ErrMsg);
 				return;
 			}
-			if (new FileInfo(txtLogPath.Text).IsReadOnly) {
-				AppendMessage("Warning: Your client.txt file appears to be readonly. This will likely prevent the program from working.");
-			}
+			if (new FileInfo(txtLogPath.Text).IsReadOnly)
+				LogMessage("Warning: Your client.txt file appears to be readonly. This will likely prevent the program from working.", null, LogMessageType.Status);
 			cmdStop.Enabled = true;
 			cmdStart.Enabled = false;
 			this.Monitor = new LogMonitor(txtLogPath.Text);
 			Monitor.BeginMonitoring();
 			Monitor.MessageReceived += ProcessMessage;
 			IdleManager.BeginMonitoring();
-			AppendMessage("Program started at " + DateTime.Now.ToShortTimeString() + ".");
+			LogMessage("Program started at " + DateTime.Now.ToShortTimeString() + ".", null, LogMessageType.Status);
 		}
 
 		private void StopMonitoring() {
@@ -148,49 +145,41 @@ namespace PoEWhisperNotifier {
 			this.Monitor.StopMonitoring();
 			IdleManager.StopMonitoring();
 			this.Monitor.MessageReceived -= ProcessMessage;
-			AppendMessage("Program stopped at " + DateTime.Now.ToShortTimeString() + ".");
+			LogMessage("Program stopped at " + DateTime.Now.ToShortTimeString() + ".", null, LogMessageType.Status);
 		}
 
 		private void testNotificationToolStripMenuItem_Click(object sender, EventArgs e) {
 			var Message = new MessageData(DateTime.Now, "Tester", "This is a fake whisper for testing notifications.", LogMessageType.Whisper);
-			SendNotification(Message, true);
+			HandleMessage(Message, true);
 		}
 
 		void ProcessMessage(MessageData obj) {
-			if (obj.MessageType == LogMessageType.Party && !Settings.Default.LogPartyMessages)
-				return;
-			if (obj.MessageType == LogMessageType.Guild && !Settings.Default.LogGuildMessages)
-				return;
+			Invoke(new Action(() => HandleMessage(obj, false)));
+		}
+
+		private void PlayNotificationsForMessage(MessageData Message, bool AssumeInactive) {
 			if (Settings.Default.NotifyMinimizedOnly && IsPoeActive()) {
 				if (!IdleManager.IsUserIdle) {
-					// If the user isn't idle, replay the message if they do go idle.
-					IdleManager.AddIdleAction(() => ProcessMessage(obj));
+					// If the user isn't yet idle, replay the message if they do go idle.
+					IdleManager.AddIdleAction(() => PlayNotificationsForMessage(Message, AssumeInactive));
 					return;
 				}
 				// Otherwise, they are idle, so process the message anyways.
 			}
-			Invoke(new Action(() => SendNotification(obj, false)));
-		}
-
-		private void SendNotification(MessageData Message, bool AssumeInactive) {
-			string StampedMessage = "[" + Message.Date.ToShortTimeString() + "]" + (Message.Sender == null ? "" : (" " + LogMonitor.ChatSymbolForMessageType(Message.MessageType) + Message.Sender)) + ": " + Message.Message;
-			string Title = "Path of Exile " + Message.MessageType;
-			AppendMessage(StampedMessage);
 			if (Settings.Default.TrayNotifications) {
 				NotificationIcon.Visible = true;
-				NotificationIcon.ShowBalloonTip(5000, Title, (Message.Sender == null ? "" : (Message.Sender + ": ")) + Message.Message, ToolTipIcon.Info);
+				NotificationIcon.ShowBalloonTip(5000, Message.Title, (Message.Sender == null ? "" : (Message.Sender + ": ")) + Message.Message, ToolTipIcon.Info);
 			}
 			if (Settings.Default.EnableSound) {
 				try {
 					this.SoundPlayer.Play();
 				} catch (Exception ex) {
-					AppendMessage("<Error playing sound. This usually occurs due to the Content folder being missing.\r\n  Additional Info: " + ex.Message + ">");
+					LogMessage("<Error playing sound. This usually occurs due to the Content folder being missing.\r\n  Additional Info: " + ex.Message + ">", null, LogMessageType.Status);
 				}
 			}
 			if (Settings.Default.EnableSmtpNotifications) {
-				// Feels wasteful to always reload, but really it should only take a millisecond or less.
 				var SmtpSettings = SmtpDetails.LoadFromSettings();
-				var SmtpAct = CheckedAction("SMTP", () => SendSmtpNotification(SmtpSettings, StampedMessage));
+				var SmtpAct = CheckedAction("SMTP", () => SendSmtpNotification(SmtpSettings, Message.DisplayMessage));
 				if (!SmtpSettings.NotifyOnlyIfIdle || AssumeInactive)
 					SmtpAct();
 				else
@@ -207,7 +196,7 @@ namespace PoEWhisperNotifier {
 				if (Pattern == null || ((Pattern != null) && Matches.Success)) {
 					var PbAct = CheckedAction("PushBullet", () => {
 						var Client = new PushBulletClient(PbSettings);
-						Client.SendPush(Title, StampedMessage);
+						Client.SendPush(Message.Title, Message.DisplayMessage);
 					});
 					if (AssumeInactive || !PbSettings.NotifyOnlyIfIdle)
 						PbAct();
@@ -221,9 +210,22 @@ namespace PoEWhisperNotifier {
 					var FlashAct = CheckedAction("Taskbar Flash", () => WindowFlasher.FlashWindow(PoeProcess.MainWindowHandle, FlashStyle.All));
 					FlashAct();
 				} else {
-					AppendMessage("<Could not find the PoE process to flash the taskbar>");
+					LogMessage("<Could not find the PoE process to flash the taskbar>", null, LogMessageType.Status);
 				}
 			}
+		}
+
+		private void HandleMessage(MessageData Message, bool AssumeInactive) {
+			var Config = MessageConfig.Single(c => c.MessageType == Message.MessageType);
+			if (Config.ExcludeFilter != null && Config.ExcludeFilter.Any(c => Message.Message.Contains(c)))
+				return;
+			if (Config.IncludeFilter != null && Config.IncludeFilter.Any() && !Config.IncludeFilter.Any(c => Message.Message.Contains(c)))
+				return;
+			if(Config.LogMessage)
+				LogMessage(Message.Prefix, Message.Message, Message.MessageType);
+			if (!Config.PlayNotification)
+				return;
+			PlayNotificationsForMessage(Message, AssumeInactive);
 		}
 
 		// Wraps an Action in a try-catch and appends to the history any errors with it.
@@ -232,13 +234,29 @@ namespace PoEWhisperNotifier {
 				try {
 					Act();
 				} catch (Exception ex) {
-					Invoke(new Action(() => AppendMessage("<Failed to send " + Task + " notification: " + ex.Message + ">\r\n")));
+					Invoke(new Action(() => LogMessage("<Failed to send " + Task + " notification: " + ex.Message + ">", null, LogMessageType.Status)));
 				}
 			};
 		}
 
-		private void AppendMessage(string Message) {
-			rtbHistory.AppendText(Message + "\r\n");
+		private void LogMessage(string Prefix, string Message, LogMessageType MessageType) {
+			var Config = MessageConfig.Single(c => c.MessageType == MessageType);
+			Color StandardColor = Color.FromArgb(239, 239, 239);
+
+			if (!String.IsNullOrWhiteSpace(Prefix))
+				LogMessagePart(Prefix, Config.ForegroundColor);
+			if (!String.IsNullOrWhiteSpace(Message))
+				LogMessagePart(": " + Message, StandardColor);
+			LogMessagePart("\r\n", StandardColor);
+		}
+
+		private void LogMessagePart(string Part, Color ForegroundColor) {
+			int Start = rtbHistory.TextLength;
+			rtbHistory.AppendText(Part);
+			int End = rtbHistory.TextLength;
+			rtbHistory.Select(Start, End - Start);
+			rtbHistory.SelectionColor = ForegroundColor;
+			rtbHistory.SelectionLength = 0;
 		}
 
 		private void SendSmtpNotification(SmtpDetails SmtpSettings, string StampedMessage) {
@@ -274,13 +292,15 @@ namespace PoEWhisperNotifier {
 					Thread.Sleep(100); // HACK: Work around issue where minimizing to tray keeps icon in taskbar.
 					Invoke(new Action(() => {
 						this.WindowState = FormWindowState.Minimized;
+						this.Visible = false;
 						NotificationIcon.Visible = true;
 						NotificationIcon.ShowBalloonTip(2000, "Whisper Notifier Started Minimized", "PoEWhisperNotifier started minimized. Double click the icon to show the window.", ToolTipIcon.Info);
 					}));
 				});
-				this.Visible = false;
-			} else {
+			} else if(Settings.Default.StartMinimized) {
 				this.WindowState = FormWindowState.Minimized;
+			} else {
+				this.WindowState = FormWindowState.Normal;
 			}
 		}
 
@@ -292,8 +312,7 @@ namespace PoEWhisperNotifier {
 
 		private bool IsPoeActive() {
 			var hWndFg = GetForegroundWindow();
-			uint pid;
-			GetWindowThreadProcessId(hWndFg, out pid);
+			GetWindowThreadProcessId(hWndFg, out uint pid);
 			var FgProc = Process.GetProcessById((int)pid);
 			if (FgProc == null)
 				return false;
@@ -319,18 +338,6 @@ namespace PoEWhisperNotifier {
 		private void tsmEnableSound_Click(object sender, EventArgs e) {
 			tsmEnableSound.Checked = !tsmEnableSound.Checked;
 			Settings.Default.EnableSound = tsmEnableSound.Checked;
-			Settings.Default.Save();
-		}
-
-		private void tsmLogPartyMessages_Click(object sender, EventArgs e) {
-			tsmLogPartyMessages.Checked = !tsmLogPartyMessages.Checked;
-			Settings.Default.LogPartyMessages = tsmLogPartyMessages.Checked;
-			Settings.Default.Save();
-		}
-
-		private void tsmLogGuildMessages_Click(object sender, EventArgs e) {
-			tsmLogGuildMessages.Checked = !tsmLogGuildMessages.Checked;
-			Settings.Default.LogGuildMessages = tsmLogGuildMessages.Checked;
 			Settings.Default.Save();
 		}
 
@@ -423,7 +430,7 @@ namespace PoEWhisperNotifier {
 					File.Move(CopyLocation, LogPath);
 					File.Delete(BackupLocation);
 				}
-				AppendMessage("Trimmed log file from " + (LogLength / (1024 * 1024)) + "MB to 10MB.");
+				LogMessage("Trimmed log file from " + (LogLength / (1024 * 1024)) + "MB to 10MB.", null, LogMessageType.Status);
 				MessageBox.Show("Done. Your log file has been trimmed.");
 			} catch (Exception ex) {
 				MessageBox.Show("Failed to trim log file:\r\n\t" + ex.Message.Replace("\n", "\n\t") + "\r\nIf your client.txt was modified, you may find a backup at client.txt.old.");
@@ -456,7 +463,14 @@ namespace PoEWhisperNotifier {
 			}
 		}
 
+		private void configureMessageTypesToolStripMenuItem_Click(object sender, EventArgs e) {
+			using (var Dialog = new ConfigureMessageSettingsDialog())
+				if (Dialog.ShowDialog() == DialogResult.OK)
+					this.MessageConfig = MessageSettings.LoadFromConfig();
+		}
+
 		private SoundPlayer SoundPlayer = new SoundPlayer("Content\\notify.wav");
 		private LogMonitor Monitor;
+		private MessageSettings[] MessageConfig;
 	}
 }

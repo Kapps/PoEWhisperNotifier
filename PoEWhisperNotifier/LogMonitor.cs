@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -29,6 +30,21 @@ namespace PoEWhisperNotifier {
 		/// The type of the message that was received (such as a whisper or disconnect).
 		/// </summary>
 		public readonly LogMessageType MessageType;
+		
+		/// <summary>
+		/// Gets a title that can be used for this message.
+		/// </summary>
+		public string Title => "Path of Exile " + this.MessageType;
+
+		/// <summary>
+		/// Gets a prefix containing the date and sender of this message.
+		/// </summary>
+		public string Prefix => "[" + this.Date.ToShortTimeString() + "]" + (this.Sender == null ? "" : (" " + LogMonitor.ChatSymbolForMessageType(this.MessageType) + this.Sender));
+
+		/// <summary>
+		/// Gets a string that contains the full details of this message.
+		/// </summary>
+		public string DisplayMessage => Prefix + ": " + Message;
 
 		public MessageData(DateTime Date, string Sender, string Message, LogMessageType MessageType) {
 			this.Date = Date;
@@ -58,12 +74,24 @@ namespace PoEWhisperNotifier {
 		/// A party message was sent or received.
 		/// </summary>
 		Party = 4,
-        /// <summary>
-        /// A guild message was sent or received.
-        /// </summary>
-        Guild = 5
+		/// <summary>
+		/// A guild message was sent or received.
+		/// </summary>
+		Guild = 5,
+		/// <summary>
+		/// A guild message was sent or received.
+		/// </summary>
+		Trade = 6,
+		/// <summary>
+		/// A guild message was sent or received.
+		/// </summary>
+		Global = 7,
+		/// <summary>
+		/// A status message from the whisper notifier.
+		/// </summary>
+		Status = 8
 
-    }
+	}
 
 	/// <summary>
 	/// Monitors a log file for changes in the form of appended lines.
@@ -159,15 +187,14 @@ namespace PoEWhisperNotifier {
 		/// </summary>=
 		public static string ChatSymbolForMessageType(LogMessageType Type) {
 			var KVP = SymbolToMessageType.FirstOrDefault(c => c.Value == Type);
-			return KVP.Key == null ? "" : KVP.Key;
+			return KVP.Key ?? "";
 		}
 
 		/// <summary>
 		/// Returns the message type that corresponds to the given chat symbol, or Unknown if none does.
 		/// </summary>
 		public static LogMessageType MessageTypeForChatSymbol(string ChatSymbol) {
-			LogMessageType Res;
-			if (!SymbolToMessageType.TryGetValue(ChatSymbol, out Res))
+			if (!SymbolToMessageType.TryGetValue(ChatSymbol, out LogMessageType Res))
 				Res = LogMessageType.Unknown;
 			return Res;
 		}
@@ -180,13 +207,14 @@ namespace PoEWhisperNotifier {
 					continue;
 				}
 				string Line = Reader.ReadLine();
-				MessageData Data;
+				var sw = Stopwatch.StartNew();
 				Action<MessageData> Ev = null;
-				if(TryParseChat(Line, out Data) || TryParseDisconnect(Line, out Data)) {
+				if (TryParseChat(Line, out MessageData Data) || TryParseDisconnect(Line, out Data)) {
 					Ev = MessageReceived;
-					if (Ev != null)
-						Ev(Data);
+					Ev?.Invoke(Data);
 				}
+				sw.Stop();
+				//Debug.WriteLine("Elapsed: " + sw.Elapsed.TotalMilliseconds + " milliseconds.");
 			}
 		}
 
@@ -225,9 +253,10 @@ namespace PoEWhisperNotifier {
 		}
 
 		// Group 1 = Chat Type, Group 2 = Username, Group 3 = Contents
-		private static readonly Regex ChatRegex = new Regex(@"^.+?\ .+?\ .+?\ .+?\ \[.+?\]\ (%|@From|@От кого|@De|&)(.+?):\ (.+)$");
+		private static readonly Regex ChatRegex = new Regex(@"^.+?\ .+?\ .+?\ .+?\ \[.+?\]\ (%|@From|@От кого|@De|&|\$|#)(.+?):\ (.+)$");
 		private static readonly Regex DisconnectRegex = new Regex(@"^.+\ .+\ .+\ .+\ \[.+\]\ Abnormal disconnect:(.+)");
-		private static readonly Dictionary<string, LogMessageType> SymbolToMessageType = new Dictionary<string, LogMessageType>() { { "%", LogMessageType.Party }, { "@", LogMessageType.Whisper }, { "&", LogMessageType.Guild } };
+		private static readonly Dictionary<string, LogMessageType> SymbolToMessageType = new Dictionary<string, LogMessageType>() { { "%", LogMessageType.Party }, { "@", LogMessageType.Whisper }, { "&", LogMessageType.Guild }, { "$", LogMessageType.Trade }, { "#", LogMessageType.Global } };
+
 
 		private FileStream _LogStream;
 		private Thread _LogThread;
