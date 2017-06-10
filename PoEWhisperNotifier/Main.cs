@@ -242,20 +242,27 @@ namespace PoEWhisperNotifier {
 		private void LogMessage(string Prefix, string Message, LogMessageType MessageType) {
 			var Config = MessageConfig.Single(c => c.MessageType == MessageType);
 			Color StandardColor = Color.FromArgb(239, 239, 239);
+			Font MessageFont = null;
+			if ((IdleManager.IsUserIdle || !IsPoeActive()) && new[] { LogMessageType.Whisper, LogMessageType.Party, LogMessageType.Disconnect }.Contains(MessageType))
+				MessageFont = new Font(rtbHistory.Font, FontStyle.Bold);
 
 			if (!String.IsNullOrWhiteSpace(Prefix))
-				LogMessagePart(Prefix, Config.ForegroundColor);
+				LogMessagePart(Prefix, Config.ForegroundColor, MessageFont);
 			if (!String.IsNullOrWhiteSpace(Message))
-				LogMessagePart(": " + Message, StandardColor);
-			LogMessagePart("\r\n", StandardColor);
+				LogMessagePart(": " + Message, StandardColor, MessageFont);
+			LogMessagePart("\r\n", StandardColor, null);
 		}
 
-		private void LogMessagePart(string Part, Color ForegroundColor) {
+		private void LogMessagePart(string Part, Color ForegroundColor, Font Font) {
 			int Start = rtbHistory.TextLength;
 			rtbHistory.AppendText(Part);
 			int End = rtbHistory.TextLength;
 			rtbHistory.Select(Start, End - Start);
 			rtbHistory.SelectionColor = ForegroundColor;
+			if (Font != null)
+				rtbHistory.SelectionFont = Font;
+			else
+				rtbHistory.SelectionFont = rtbHistory.Font;
 			rtbHistory.SelectionLength = 0;
 		}
 
