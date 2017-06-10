@@ -57,7 +57,6 @@ namespace PoEWhisperNotifier {
 				else
 					LogMessage("Unable to figure out client.txt location. You will have to manually set the path.", null, LogMessageType.Status);
 			}
-			StartMonitoring(true);
 			this.ResizeEnd += OnResizeEnd;
 		}
 
@@ -244,7 +243,7 @@ namespace PoEWhisperNotifier {
 			Color StandardColor = Color.FromArgb(239, 239, 239);
 			Font MessageFont = null;
 			if ((IdleManager.IsUserIdle || !IsPoeActive()) && new[] { LogMessageType.Whisper, LogMessageType.Party, LogMessageType.Disconnect }.Contains(MessageType))
-				MessageFont = new Font(rtbHistory.Font, FontStyle.Bold);
+				MessageFont = new Font(rtbHistory.Font.FontFamily, rtbHistory.Font.Size + 2, FontStyle.Bold);
 
 			if (!String.IsNullOrWhiteSpace(Prefix))
 				LogMessagePart(Prefix, Config.ForegroundColor, MessageFont);
@@ -309,6 +308,8 @@ namespace PoEWhisperNotifier {
 			} else {
 				this.WindowState = FormWindowState.Normal;
 			}
+
+			StartMonitoring(true);
 		}
 
 		private void notifyOnlyWhenMinimizedToolStripMenuItem_Click(object sender, EventArgs e) {
